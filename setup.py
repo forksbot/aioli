@@ -57,7 +57,6 @@ class UploadCommand(upload):
 
 
 required = [
-    "sanic>=18.12.0",
     "aiohttp>=4.0.0a0",
     "aiopg>=0.16.0",
     "psycopg2-binary>=2.7.7",
@@ -72,7 +71,7 @@ required = [
 setup(
     name='aioli',
     version=version,
-    description='Framework for building Web APIs using asyncio',
+    description='Framework for building HTTP APIs using asyncio',
     long_description=readme,
     long_description_content_type='text/markdown',
     author='Robert Wikman',
