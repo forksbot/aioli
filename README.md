@@ -30,7 +30,7 @@ Getting started
 ---
 
 Read the documentation at [https://aioli.rtfd.io](https://aioli.rtfd.io),
-or check out the [jet-guestbook](https://github.com/rbw/jet-guestbook) example.
+or check out the [guestbook](https://github.com/rbw/aioli-guestbook) example.
  
 
 
@@ -44,18 +44,18 @@ If you're interested in helping out in any way, let me know by creating an Issue
 Below are various tasks that needs completion in a first stable release. 
 
 ##### Currently in progress
-- [ ] [Admin UI/OpenAPI](https://github.com/rbw/aioli/projects/2#card-17017968)
-- [ ] [API documentation](https://github.com/rbw/aioli/projects/2#card-17018073)
-- [ ] [Unit Tests](https://github.com/rbw/aioli/projects/2#card-17018080)
+- [ ] [Admin UI/OpenAPI](https://github.com/rbw/aioli/projects/2#card-19607055)
+- [ ] [API documentation](https://github.com/rbw/aioli/projects/2#card-19606997)
+- [ ] [Unit Tests](https://github.com/rbw/aioli/projects/2#card-19607051)
+- [ ] [CORS support](https://github.com/rbw/aioli/projects/2#card-19607029)
 
 ##### Todo
-- [ ] [CORS support](https://github.com/rbw/aioli/projects/2#card-17018027)
-- [ ] [GraphQL support](https://github.com/rbw/aioli/projects/2#card-17018036)
-- [ ] [Users package](https://github.com/rbw/aioli/projects/2#card-17018007)
-- [ ] [Authentication package](https://github.com/rbw/aioli/projects/2#card-17018013)
-- [ ] [Project Wiki](https://github.com/rbw/aioli/projects/2#card-17017985)
-- [ ] [Command-line interface](https://github.com/rbw/aioli/projects/2#card-17017975)
-- [ ] [Modular core](https://github.com/rbw/aioli/projects/2#card-18585354)
+- [ ] [WebSocket support](https://github.com/rbw/aioli/projects/2#card-19607124)
+- [ ] [Users package](https://github.com/rbw/aioli/projects/2#card-19607040)
+- [ ] [Authentication package](https://github.com/rbw/aioli/projects/2#card-19607036)
+- [ ] [Project Wiki](https://github.com/rbw/aioli/projects/2#card-19607041)
+- [ ] [GraphQL support](https://github.com/rbw/aioli/projects/2#card-19607100)
+- [ ] [Command-line interface](https://github.com/rbw/aioli/projects/2#card-19607045)
 
 Author
 ---
