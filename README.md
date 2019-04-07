@@ -12,24 +12,24 @@ The idea with Aioli is to provide developers with a sensible base structure and 
 building *performant*, *lightweight* and *scalable* HTTP API packages that can
 be easily deployed or distributed.
 
-It's built on top of [aiohttp](https://github.com/aio-libs/aiohttp) and uses the *blazing fast* [uvloop](https://github.com/MagicStack/uvloop) implementation of the asyncio event loop.
+Aioli makes use of the excellent [encode](https://github.com/encode) libraries and the *blazing fast* [uvloop](https://github.com/MagicStack/uvloop) implementation of the asyncio event loop.
 
 Features and limitations:
-- Delivers performance and concurrency
+- Delivers good performance and concurrency
 - Scales horizontally
 - Supports CORS and JWT out of the box
-- Has built-in support for [Postgres](https://www.postgresql.org) databases
+- Built-in ORM with support for Postgres, Mysql and SQLite
 - Provides intuitive tools for object serialization
 - Created with [Docker](https://www.docker.com) and [Kubernetes](https://kubernetes.io) in mind
 - Works only with modern versions of Python (3.6+)
 - Event loop driven; code must be [asynchronous](https://docs.python.org/3/library/asyncio.html)
 
-Also - Aioli comes with a REST API browser, try it out at [https://demo.aioli.dev](https://demo.aioli.dev).
+Furthermore, Aioli comes with a REST API browser, try it out at [https://demo.aioli.dev](https://demo.aioli.dev).
 
 Getting started
 ---
 
-Read the documentation at [https://aioli.rtfd.io](https://aioli.rtfd.io),
+Head over to the documentation at [https://aioli.rtfd.io](https://aioli.rtfd.io),
 or check out the [guestbook](https://github.com/rbw/aioli-guestbook) example.
  
 
