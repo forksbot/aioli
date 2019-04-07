@@ -7,12 +7,18 @@ license = 'BSD-2-Clause'
 
 [tool.poetry.dependencies]
 python = '^3.6'
-starlette = '~0.12.0b3'
-marshmallow = '~3.0.0rc3'
+starlette = '^0.12.0b3'
+orm = '~0.1'
+databases = { version = '0.2.1', extras = [ "postgresql" ] }
+aiohttp = '^3.5.4'
+uvloop = '^0.12.1'
+uvicorn = '^0.6.1'
+requests_async = '^0.2.0'
+marshmallow = '^3.0.0rc3'
 gino = '~0.8.2'
 ujson = '^1.35'
 pyyaml = '^3.13'
-uvloop = '^0.12.1'
+maxminddb-geolite2 = '*'
 
 [tool.poetry.dev-dependencies]
 twine = '^1.13'
