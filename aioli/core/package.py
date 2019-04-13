@@ -24,7 +24,7 @@ class Package:
         self.models = models or []
         self.name = validated_identifier(name)
         self.description = description
-        self.log = getLogger(f'pkg.{self.name}')
+        self.log = getLogger(f'aioli.pkg.{self.name}')
 
     @property
     def path(self):
