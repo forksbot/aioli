@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from sanic.exceptions import SanicException
+from starlette.exceptions import HTTPException
 
 
-class AioliException(SanicException):
+class InternalError(HTTPException):
+    def __init__(self, *args, **kwargs):
+        super(InternalError, self).__init__(*args, **kwargs)
+
+
+class AioliException(HTTPException):
     def __init__(self, *args, **kwargs):
         self.log_message = kwargs.pop('write_log', False)
 

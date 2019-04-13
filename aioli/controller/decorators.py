@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 
+"""
+Route decorators are executed in the reversed order.
+output_dump -> input_load -> route
+"""
+
 from enum import Enum
 from functools import wraps
 
 import ujson
-from aiohttp.web_request import Request
-from aiohttp.web_response import Response
+from starlette.requests import Request
+from starlette.responses import Response
 
 from aioli.registry import RouteRegistry
 
@@ -74,9 +79,9 @@ def output_dump(schema_cls, status=200, many=False):
 
             # Return HTTP encoded JSON response
             return Response(
-                body=schema.dumps(rv, indent=4),
-                status=status,
-                content_type='application/json'
+                content=schema.dumps(rv.__dict__, indent=4),
+                status_code=status,
+                headers={'content-type': 'application/json'}
             )
 
         stack = RouteRegistry.get_stack(handler)
@@ -106,11 +111,14 @@ def input_load(**schemas):
 
             request = kwargs['request'] if 'request' in kwargs else args_new.pop(1)
 
+            if 'path' in schemas:
+                kwargs.update(schemas['path'].load(request.path_params))
+
             if 'body' in schemas:
                 kwargs.update({'body': schemas['body'].load(request.json)})
 
             if 'query' in schemas:
-                kwargs.update({'query': schemas['query'].load(request.query)})
+                kwargs.update({'query': schemas['query'].load(request.query_params)})
 
             return await fn(*args_new, **kwargs)
 

@@ -1,24 +1,28 @@
 # -*- coding: utf-8 -*-
 
-from os import getpid
+import logging
 import inspect
+from os import getpid
 
-from aiohttp import ClientSession, web
-# from sanic_cors import CORS
+import sqlalchemy
+from starlette.applications import Starlette
+from aiohttp import ClientSession
 
+from aioli.exceptions import InternalError
 from aioli.core.package import Package
+from aioli.db import DatabaseManager, BaseModel
 from aioli.utils import format_path
-from aioli.db import Database
 
 
 class Manager:
     """Takes care of package registration and injection upon application start"""
 
     pkgs = []
-    app = None
+    app: Starlette = None
+    db = DatabaseManager
     loop = None
-    db = Database
     http_client: ClientSession
+    log = logging.getLogger('aioli.manager')
 
     @property
     def models(self):
@@ -43,12 +47,15 @@ class Manager:
                 raise Exception(f'Invalid package type {module.pkg}: must be of type {Package}')
 
             export = module.export
+
             if export.name in dict(self.pkgs).keys():
                 raise Exception(f'Duplicate package name {export.name}')
 
             export.version = getattr(module, '__version__', '0.0.0')
             export.path = assigned_path
-            export.log.debug(f'Loading version {export.version}')
+
+            self.log.info(f'Attaching {export.name}/{export.version}')
+
             self.pkgs.append((export.name, export))
 
     async def _register_services(self):
@@ -67,31 +74,24 @@ class Manager:
 
                 pkg.log.info(f'Service {svc.__name__} initialized')
 
-    def _register_models(self):
+    async def _register_models(self):
         """Registers Models with the application, and creates non-existent tables"""
 
         models = list(self.models)
-        registered = []
 
-        if models and not self.db.connection:
-            raise Exception('Unable to register models without a database connection')
+        if models and not self.db.database:
+            raise InternalError('Unable to register models without a database connection')
+
+        engine = sqlalchemy.create_engine(self.db.url)
 
         for pkg, model in models:
-            if not hasattr(model, 'Meta'):
-                meta = type('ModelMeta', (object, ), {})
-                model.Meta = meta
+            pkg.log.debug(f'Registering model: {model.__name__} [{model.__tablename__}]')
+            # self.db.create(engine)
+            model.register(pkg.name)
+            if not model.__table__.exists(engine):
+                model.__table__.create(engine)
 
-            # Inject model meta and set its namespace
-            meta = model._meta
-            meta.database = self.db.connection
-            meta.table_name = f'{pkg.name}__{meta.table_name}'
-
-            pkg.log.debug(f'Registering model: {model.__name__} [{meta.table_name}]')
-
-            registered.append(model)
-
-        with self.db.connection.allow_sync():
-            self.db.connection.create_tables(registered, safe=True)
+            # await model.create()
 
     async def _register_controllers(self):
         """Registers Controllers with Application"""
@@ -114,22 +114,10 @@ class Manager:
                     f'{route.name} [{handler_addr}]'
                 )
 
-                # Register with Sanic
-                from functools import partial
-                method = route.method
-                route = partial(getattr(web, str(method).lower()), path_full, handler)
-                self.app.add_routes([route()])
-                """self.app.route(
-                    uri=path_full,
-                    methods=frozenset({route.method}),
-                    host=None,
-                    strict_slashes=False,
-                    stream=None,
-                    version=None,
-                    name=handler_name,
-                )(handler)"""
+                methods = [route.method]
+                self.app.add_route(path_full, handler, methods, handler_name)
 
-                # Inject full path to route handler
+                # Inject full path into handler
                 route.path_full = path_full
 
             # Let the Controller know we're ready to receive requests
@@ -140,37 +128,34 @@ class Manager:
 
             pkg.log.info('Controller initialized')
 
-    def register_cors(self):
-        cors_options = self.app.cors_options or {}
-        # CORS(self.sanic, **cors_options)
-
     async def detach(self, *_):
         """Application stop-handler"""
 
         await self.http_client.close()
 
-    async def attach(self, app, loop):
+    async def attach(self, app):
         """Application start-handler
 
         Sets up DB and HTTP clients, followed by component registration.
 
         :param app: Instance of aioli.Application
-        :param loop: Instance of `uvloop.Loop`
         """
 
         self._load_packages(app.packages)
         self.app = app
-        self.loop = loop
 
-        self.http_client = ClientSession(loop=loop)
+        # self.loop = loop
+
+        # self.http_client = ClientSession(loop=loop)
         if app.config['DB_URL']:
-            self.db.register(app, loop)
-            self._register_models()
+            self.db = await DatabaseManager.init(app.config['DB_URL'])
+            await self._register_models()
 
         await self._register_controllers()
         await self._register_services()
 
-        app.log.info(f'Worker {getpid()} ready for action')
+        # app.log.info(f'Worker {getpid()} ready for action')
+        self.log.info('Components loaded')
 
 
 mgr = Manager()

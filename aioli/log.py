@@ -2,36 +2,24 @@
 
 import sys
 
-
 LOGGING_CONFIG_DEFAULTS = dict(
     version=1,
     disable_existing_loggers=False,
     loggers={
         'root': {
-            'level': 'INFO',
-            'handlers': ['console']
-        },
-        'peewee': {
-            'level': 'INFO',
-            'handlers': ['console'],
-            'propagate': True,
-        },
-        'pkg': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'handlers': ['pkg_console'],
-            'propagate': True,
+            'propagate': False,
         },
-        'aiohttp': {
-            'level': 'INFO',
-            'handlers': ['app_console'],
-            'propagate': True,
-            'qualname': 'aiohttp.internal',
+        'aioli': {
+            'level': 'DEBUG',
+            'handlers': ['pkg_console'],
+            'propagate': False,
         },
-        'aiohttp.access': {
-            'level': 'INFO',
-            'handlers': ['access_console'],
-            'propagate': True,
-            'qualname': 'aiohttp.access',
+        'uvicorn': {
+            'level': 'DEBUG',
+            'handlers': ['pkg_console'],
+            'propagate': False,
         },
     },
     handlers={
@@ -40,9 +28,9 @@ LOGGING_CONFIG_DEFAULTS = dict(
             'formatter': 'generic',
             'stream': sys.stdout
         },
-        'app_console': {
+        'request_console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'generic',
+            'formatter': 'access',
             'stream': sys.stdout,
         },
         'access_console': {
@@ -63,8 +51,7 @@ LOGGING_CONFIG_DEFAULTS = dict(
             'class': 'logging.Formatter'
         },
         'access': {
-            'format': '[%(levelname)1.1s %(asctime)s.%(msecs)03d %(process)d] '
-                      '%(request)s - client: %(host)s, status: %(status)d, size: %(byte)d',
+            'format': '[%(levelname)1.1s %(asctime)s.%(msecs)03d %(process)d] %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S',
             'class': 'logging.Formatter',
         },
