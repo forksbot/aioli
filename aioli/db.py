@@ -1,48 +1,49 @@
-# -*- coding: utf-8 -*-
-
-from urllib.parse import urlparse, parse_qs
-
-from peewee_async import Manager, PooledMySQLDatabase, PooledPostgresqlDatabase
+from orm.models import Model, ModelMetaclass
+import databases
+import sqlalchemy
 
 
-class Database:
-    connection: PooledPostgresqlDatabase
-    manager: Manager
-
-    @classmethod
-    def register(cls, app, loop):
-        db_url = app.config.get('DB_URL')
-        if not db_url:
-            return
-
-        cls.connection = cls._create_connection(db_url)
-        cls.connection.allow_sync = False
-        cls.manager = Manager(cls.connection, loop=loop)
+class DatabaseManager:
+    engine = None
+    url = None
+    database: databases.Database = None
+    metadata = sqlalchemy.MetaData()
 
     @classmethod
-    def _create_connection(cls, url):
-        parsed = urlparse(url)
+    async def init(cls, url):
+        cls.url = str(url)
+        cls.database = databases.Database(cls.url)
+        await cls.database.connect()
+        return cls()
 
-        if parsed.scheme == 'postgres':
-            interface = PooledPostgresqlDatabase
-        elif parsed.scheme == 'mysql':
-            interface = PooledMySQLDatabase
-        else:
-            raise Exception(f'Database URL scheme must be "mysql" or "postgres", '
-                            f'example: postgres://user:pass@127.0.0.1/database')
 
-        params = parse_qs(parsed.query)
-        pool_min = params.pop('pool_min', [5])[0]
-        pool_max = params.pop('pool_max', [50])[0]
+class BaseModelMeta(ModelMetaclass):
+    def __new__(mcs, name, bases, attrs):
+        attrs['__metadata__'] = DatabaseManager.metadata
 
-        settings = dict(
-            database=parsed.path.lstrip('/'),
-            user=parsed.username,
-            password=parsed.password,
-            host=parsed.hostname,
-            port=parsed.port,
-            min_connections=int(pool_min),
-            max_connections=int(pool_max),
+        new_model = super(BaseModelMeta, mcs).__new__(  # type: ignore
+            mcs, name, bases, attrs
         )
 
-        return interface(**settings)
+        return new_model
+
+
+class BaseModel(Model, metaclass=BaseModelMeta):
+    __abstract__ = True
+    __metadata__ = None
+
+    @classmethod
+    def register(cls, pkg_name):
+        cls.__tablename__ = f'{pkg_name}__{cls.__tablename__}'
+        cls.__database__ = DatabaseManager.database
+
+        pkname = None
+        columns = []
+        for name, field in cls.fields.items():
+            if field.primary_key:
+                pkname = name
+
+            columns.append(field.get_column(name))
+
+        cls.__table__ = sqlalchemy.Table(cls.__tablename__, cls.__metadata__, *columns)
+        cls.__table__.__pkname__ = pkname
