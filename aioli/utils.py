@@ -4,7 +4,8 @@ import os
 import re
 
 import yaml
-from sanic.response import json
+import ujson
+from starlette.responses import Response
 
 
 def format_path(*parts):
@@ -25,8 +26,12 @@ def validated_identifier(value):
     return value
 
 
-def jsonify(data, **kwargs):
-    return json(body=data, **kwargs, indent=4)
+def jsonify(content, status):
+    return Response(
+        content=ujson.dumps(content),
+        status_code=status,
+        headers={'content-type': 'application/json'}
+    )
 
 
 def request_ip(request):
