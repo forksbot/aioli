@@ -79,7 +79,7 @@ def output_dump(schema_cls, status=200, many=False):
 
             # Return HTTP encoded JSON response
             return Response(
-                content=schema.dumps(rv.__dict__, indent=4),
+                content=schema.dumps(rv, indent=4),
                 status_code=status,
                 headers={'content-type': 'application/json'}
             )
