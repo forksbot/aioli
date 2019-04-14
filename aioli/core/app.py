@@ -5,10 +5,25 @@ import logging.config
 import traceback
 
 from starlette.applications import Starlette
+from marshmallow.exceptions import ValidationError
 
+from aioli.exceptions import HTTPException
 from aioli.log import LOGGING_CONFIG_DEFAULTS
+from aioli.utils import jsonify
 from .settings import ApplicationSettings
 from .manager import mgr
+
+
+async def error_validation(_, exc):
+    """Marshmallow validation error"""
+
+    return jsonify({'message': exc.messages}, status=422)
+
+
+async def http_error(_, exc):
+    """Custom Aioli errors"""
+
+    return jsonify({'message': exc.detail}, status=exc.status_code)
 
 
 class Application(Starlette):
@@ -60,3 +75,6 @@ class Application(Starlette):
         self.config = ApplicationSettings(overrides, path).merged
 
         self.router.lifespan.add_event_handler('startup', self.start)
+
+        self.add_exception_handler(HTTPException, http_error)
+        self.add_exception_handler(ValidationError, error_validation)
