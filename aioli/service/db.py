@@ -3,7 +3,7 @@
 import orm
 
 from aioli.core.manager import DatabaseManager
-from aioli.exceptions import DatabaseError, NoMatchFound
+from aioli.exceptions import DatabaseError, AioliException, NoMatchFound
 from .base import BaseService
 
 
@@ -31,16 +31,16 @@ class DatabaseService(BaseService):
 
     def _model_has_attrs(self, *attrs):
         for attr in attrs:
-            if not hasattr(self.model, attr):
-                raise Exception(f'Unknown field {attr}', 400)
+            if attr not in self.model.fields:
+                raise AioliException(400, f'Unknown field {attr}')
 
         return True
 
     def _parse_sortstr(self, value: str):
-        if not value:
-            return []
+        from sqlalchemy import desc, asc
 
-        model = self.model
+        if not value:
+            return None
 
         for col_name in value.split(','):
             sort_asc = True
@@ -49,27 +49,22 @@ class DatabaseService(BaseService):
                 sort_asc = False
 
             if self._model_has_attrs(col_name):
-                sort_obj = getattr(model, col_name)
-                yield sort_obj.asc() if sort_asc else sort_obj.desc()
-
-    def _get_query_filtered(self, query, **control):
-        query = self.__model__.objects.filter(**query).limit(limit).offset(offset)
-
-        if sort:
-            order = self._parse_sortstr(sort)
-            return query.order_by(*order)
-
-        return query
+                yield asc(col_name) if sort_asc else desc(col_name)
 
     async def get_many(self, **query):
-        #query = self._get_query_filtered(expression, **kwargs)
-        #return [o for o in await self.db_manager.execute(query)]
-
         sort = query.pop('_sort', None)
-        limit = query.pop('_limit', 0)
-        offset = query.pop('_offset', 0)
+        limit = query.pop('_limit', None)
+        offset = query.pop('_offset', None)
 
-        return [o.__dict__ for o in await self.model.objects.filter(**query).all()]
+        query_filtered = (
+            self.model.objects.filter(**query)
+                .build_select_expression()
+                .offset(offset)
+                .limit(limit)
+                .order_by(*self._parse_sortstr(sort))
+        )
+
+        return [o for o in await self.db_manager.database.fetch_all(query_filtered)]
 
     async def get_one(self, **query):
         try:
