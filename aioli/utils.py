@@ -35,7 +35,8 @@ def jsonify(content, status):
 
 
 def request_ip(request):
-    return request.remote_addr or request.ip
+    return request.client.host
+    # return request.remote_addr or request.ip
 
 
 def yaml_parse(file, keys_to_upper=False):
