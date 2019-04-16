@@ -4,6 +4,7 @@ import logging
 import logging.config
 import traceback
 
+from json.decoder import JSONDecodeError
 from starlette.applications import Starlette
 from marshmallow.exceptions import ValidationError
 
@@ -14,15 +15,15 @@ from .settings import ApplicationSettings
 from .manager import mgr
 
 
-async def error_validation(_, exc):
-    """Marshmallow validation error"""
-
+async def validation_error(_, exc):
     return jsonify({'message': exc.messages}, status=422)
 
 
-async def http_error(_, exc):
-    """Custom Aioli errors"""
+async def decode_error(*_):
+    return jsonify({'message': 'Error decoding JSON'}, status=400)
 
+
+async def http_error(_, exc):
     return jsonify({'message': exc.detail}, status=exc.status_code)
 
 
@@ -77,4 +78,5 @@ class Application(Starlette):
         self.router.lifespan.add_event_handler('startup', self.start)
 
         self.add_exception_handler(HTTPException, http_error)
-        self.add_exception_handler(ValidationError, error_validation)
+        self.add_exception_handler(ValidationError, validation_error)
+        self.add_exception_handler(JSONDecodeError, decode_error)
