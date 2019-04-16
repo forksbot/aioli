@@ -77,7 +77,7 @@ class DatabaseService(BaseService):
             raise NoMatchFound
 
     async def create(self, item: dict):
-        return await self.db_manager.create(self.model, **item)
+        return await self.model.objects.create(**item)
 
     async def get_or_create(self, item: dict):
         return await self.db_manager.get_or_create(self.model, **item)
