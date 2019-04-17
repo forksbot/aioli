@@ -75,7 +75,7 @@ class Manager:
                 pkg.log.info(f'Service {svc.__name__} initialized')
 
     async def _register_models(self):
-        """Registers Models with the application, and creates non-existent tables"""
+        """Registers Models with the application and performs table creation"""
 
         models = list(self.models)
 
@@ -85,13 +85,10 @@ class Manager:
         engine = sqlalchemy.create_engine(self.db.url)
 
         for pkg, model in models:
-            pkg.log.debug(f'Registering model: {model.__name__} [{model.__tablename__}]')
-            # self.db.create(engine)
-            model.register(pkg.name)
-            if not model.__table__.exists(engine):
-                model.__table__.create(engine)
+            model.__database__ = self.db.database
+            pkg.log.debug(f'Registering model: {model.__name__} [{model.__table__.name}]')
 
-            # await model.create()
+        self.db.metadata.create_all(engine)
 
     async def _register_controllers(self):
         """Registers Controllers with Application"""
