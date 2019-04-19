@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import asyncio
 import logging
 import inspect
-from os import getpid
 
 import sqlalchemy
 from starlette.applications import Starlette
@@ -10,7 +10,7 @@ from aiohttp import ClientSession
 
 from aioli.exceptions import InternalError
 from aioli.core.package import Package
-from aioli.db import DatabaseManager, BaseModel
+from aioli.db import DatabaseManager
 from aioli.utils import format_path
 
 
@@ -20,7 +20,7 @@ class Manager:
     pkgs = []
     app: Starlette = None
     db = DatabaseManager
-    loop = None
+    loop = asyncio.get_event_loop()
     http_client: ClientSession
     log = logging.getLogger('aioli.manager')
 
