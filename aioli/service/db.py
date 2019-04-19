@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from sqlalchemy import select, func
+
 import orm
 
 from aioli.core.manager import DatabaseManager
@@ -8,7 +10,7 @@ from .base import BaseService
 
 
 class DatabaseService(BaseService):
-    """Service class providing an interface with common database operations
+    """Service class providing an interface for common database operations
 
     :ivar __model__: Peewee.Model
     :ivar db_manager: Aioli database manager (peewee-async)
@@ -76,15 +78,12 @@ class DatabaseService(BaseService):
         except orm.exceptions.NoMatch:
             raise NoMatchFound
 
-    async def create(self, item: dict):
+    async def create(self, **item: dict):
         return await self.model.objects.create(**item)
 
-    async def get_or_create(self, item: dict):
-        return await self.db_manager.get_or_create(self.model, **item)
-
-    async def count(self, expression=None, **kwargs):
-        query = self._get_query_filtered(expression, **kwargs)
-        return await self.db_manager.count(query)
+    async def count(self, **query):
+        query = select([func.count()]).select_from(self.model.__table__)
+        return await self.db_manager.database.fetch_val(query)
 
     async def update(self, record, payload):
         if not isinstance(record, peewee.Model):
