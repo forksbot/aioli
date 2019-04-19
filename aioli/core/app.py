@@ -36,13 +36,17 @@ class Application(Starlette):
     :param kwargs: kwargs to pass along to Sanic
     """
 
-    async def start(self):
+    async def startup(self):
         try:
             await mgr.attach(self)
             self.log.info('Ready for action')
         except Exception as e:
             self.log.critical(traceback.format_exc())
             raise e
+
+    async def shutdown(self):
+        self.log.info('Disconnecting from database...')
+        await mgr.db.database.disconnect()
 
     def __init__(self, packages=None, path='/api', cors_options=None, settings=None, **kwargs):
         # super(Application, self).__init__(False, [])
@@ -75,8 +79,11 @@ class Application(Starlette):
         # Apply known settings from ENV or provided `settings`
         self.config = ApplicationSettings(overrides, path).merged
 
-        self.router.lifespan.add_event_handler('startup', self.start)
+        # Lifespan handlers
+        self.router.lifespan.add_event_handler('startup', self.startup)
+        self.router.lifespan.add_event_handler('shutdown', self.shutdown)
 
+        # Error handlers
         self.add_exception_handler(HTTPException, http_error)
         self.add_exception_handler(ValidationError, validation_error)
         self.add_exception_handler(JSONDecodeError, decode_error)
