@@ -23,19 +23,17 @@ Additional parameters can be provided to further customize the instance - see th
 .. code-block:: python
 
     import aioli
-    import jet_apispec
-    import jet_guestbook
+    import aioli_apispec
+    import aioli_guestbook
 
     # Create application
     app = aioli.Application(
         path='/api',
         packages=[
-            ('/guestbook', jet_guestbook),
-            ('/packages', jet_apispec)
+            ('/guestbook', aioli_guestbook),
+            ('/packages', aioli_apispec)
         ]
     )
 
     # Start server
     app.run(host='192.168.0.1')
-
-

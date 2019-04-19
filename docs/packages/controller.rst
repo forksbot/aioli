@@ -42,7 +42,7 @@ Used without the `@input_load` decorator, the entire request object is passed to
 
 .. code-block:: python
 
-    from sanic.response import HTTPResponse
+    from aioli.utils import jsonify
     from aioli.controller import BaseController, route
 
     class Controller(BaseController):
@@ -51,7 +51,7 @@ Used without the `@input_load` decorator, the entire request object is passed to
 
         @route('/<name>', 'GET'):
         async def greet(self, request, name):
-            return HTTPResponse({'msg': f'hello {name} from {request.ip}')
+            return jsonify({'msg': f'hello {name} from {request.ip}')
 
 
 Transformation
