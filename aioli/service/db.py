@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, desc, asc
 
 import orm
 
@@ -54,7 +54,7 @@ class DatabaseService(BaseService):
                 yield asc(col_name) if sort_asc else desc(col_name)
 
     async def get_many(self, **query):
-        sort = query.pop('_sort', None)
+        sort = self._parse_sortstr(query.pop('_sort', None))
         limit = query.pop('_limit', None)
         offset = query.pop('_offset', None)
 
@@ -63,15 +63,14 @@ class DatabaseService(BaseService):
                 .build_select_expression()
                 .offset(offset)
                 .limit(limit)
-                .order_by(*self._parse_sortstr(sort))
+                .order_by(*sort)
         )
 
         return [o for o in await self.db_manager.database.fetch_all(query_filtered)]
 
     async def get_one(self, **query):
         try:
-            rv = await self.model.objects.get(**query)
-            return rv.__dict__
+            return await self.model.objects.get(**query)
         except (orm.exceptions.MultipleMatches, KeyError) as e:
             self.log.exception(e)
             raise DatabaseError

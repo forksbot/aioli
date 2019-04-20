@@ -5,7 +5,7 @@ from multiprocessing import cpu_count
 
 from marshmallow import Schema, fields, post_load
 
-from aioli.utils import yaml_parse
+from aioli.utils.settings import yaml_parse
 
 
 class YamlSettings:

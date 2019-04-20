@@ -10,7 +10,7 @@ from marshmallow.exceptions import ValidationError
 
 from aioli.exceptions import HTTPException
 from aioli.log import LOGGING_CONFIG_DEFAULTS
-from aioli.utils import jsonify
+from aioli.utils.http import jsonify
 from .settings import ApplicationSettings
 from .manager import mgr
 

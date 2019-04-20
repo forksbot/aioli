@@ -11,7 +11,6 @@ from aiohttp import ClientSession
 from aioli.exceptions import InternalError
 from aioli.core.package import Package
 from aioli.db import DatabaseManager
-from aioli.utils import format_path
 
 
 class Manager:
@@ -105,7 +104,18 @@ class Manager:
             for handler, route in ctrl.stacks:
                 handler_addr = hex(id(handler))
                 handler_name = f'{pkg_name}.{route.name}'
+                import re
+
+                def format_path(*parts):
+                    path = ''
+
+                    for part in parts:
+                        path = f'/{path}/{part}'
+
+                    return re.sub(r'/+', '/', path.rstrip('/'))
+
                 path_full = format_path(path_base, pkg.path, route.path)
+                print(path_full)
                 pkg.log.debug(
                     f'Registering route: {path_full} [{route.method}] => '
                     f'{route.name} [{handler_addr}]'

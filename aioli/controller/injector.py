@@ -3,7 +3,7 @@
 from functools import partial
 from enum import Enum
 
-from aioli.utils import request_ip
+from aioli.utils.http import request_ip
 
 
 class Injector(Enum):
