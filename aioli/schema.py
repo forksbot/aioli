@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import typesystem
+from marshmallow import *
+from marshmallow import validate
 
 
-class ParamsSchema(typesystem.Schema):
-    _limit = typesystem.Integer(minimum=0)
-    _offset = typesystem.Integer(minimum=0)
-    _sort = typesystem.String(default='')
+class ParamsSchema(Schema):
+    _limit = fields.Integer(missing=100, validate=validate.Range(min=0))
+    _offset = fields.Integer(missing=0, validate=validate.Range(min=0))
+    _sort = fields.String(missing='')
 
 
-class CountSchema(typesystem.Schema):
-    count = typesystem.Integer()
+class CountSchema(Schema):
+    count = fields.Integer()
 
 
-class DeleteSchema(typesystem.Schema):
-    deleted = typesystem.Integer()
+class DeleteSchema(Schema):
+    deleted = fields.Integer()
