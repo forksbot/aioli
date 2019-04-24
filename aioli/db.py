@@ -1,4 +1,4 @@
-from orm.models import Model, ModelMetaclass
+from orm import models
 import databases
 import sqlalchemy
 
@@ -17,8 +17,14 @@ class DatabaseManager:
         return cls()
 
 
-class BaseModelMeta(ModelMetaclass):
+class BaseModelMeta(models.ModelMetaclass):
     def __new__(mcs, name, bases, attrs):
+        if '__tablename__' in attrs:
+            assert '__module__' in attrs
+
+            pkg_name = attrs['__module__'].split('.')[0]
+            attrs['__tablename__'] = f"{pkg_name}__{attrs['__tablename__']}"
+
         attrs['__metadata__'] = DatabaseManager.metadata
 
         new_model = super(BaseModelMeta, mcs).__new__(  # type: ignore
@@ -28,22 +34,6 @@ class BaseModelMeta(ModelMetaclass):
         return new_model
 
 
-class BaseModel(Model, metaclass=BaseModelMeta):
+class BaseModel(models.Model, metaclass=BaseModelMeta):
     __abstract__ = True
     __metadata__ = None
-
-    @classmethod
-    def register(cls, pkg_name):
-        cls.__tablename__ = f'{pkg_name}__{cls.__tablename__}'
-        cls.__database__ = DatabaseManager.database
-
-        pkname = None
-        columns = []
-        for name, field in cls.fields.items():
-            if field.primary_key:
-                pkname = name
-
-            columns.append(field.get_column(name))
-
-        cls.__table__ = sqlalchemy.Table(cls.__tablename__, cls.__metadata__, *columns)
-        cls.__table__.__pkname__ = pkname

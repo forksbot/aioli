@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from sqlalchemy import select, func, desc, asc
+
 import orm
 
 from aioli.core.manager import DatabaseManager
-from aioli.exceptions import DatabaseError, NoMatchFound
+from aioli.exceptions import DatabaseError, AioliException, NoMatchFound
 from .base import BaseService
 
 
 class DatabaseService(BaseService):
-    """Service class providing an interface with common database operations
+    """Service class providing an interface for common database operations
 
     :ivar __model__: Peewee.Model
     :ivar db_manager: Aioli database manager (peewee-async)
@@ -31,16 +33,16 @@ class DatabaseService(BaseService):
 
     def _model_has_attrs(self, *attrs):
         for attr in attrs:
-            if not hasattr(self.model, attr):
-                raise Exception(f'Unknown field {attr}', 400)
+            if attr not in self.model.fields:
+                raise AioliException(400, f'Unknown field {attr}')
 
         return True
 
     def _parse_sortstr(self, value: str):
-        if not value:
-            return []
+        from sqlalchemy import desc, asc
 
-        model = self.model
+        if not value:
+            return None
 
         for col_name in value.split(','):
             sort_asc = True
@@ -49,47 +51,38 @@ class DatabaseService(BaseService):
                 sort_asc = False
 
             if self._model_has_attrs(col_name):
-                sort_obj = getattr(model, col_name)
-                yield sort_obj.asc() if sort_asc else sort_obj.desc()
-
-    def _get_query_filtered(self, query, **control):
-        query = self.__model__.objects.filter(**query).limit(limit).offset(offset)
-
-        if sort:
-            order = self._parse_sortstr(sort)
-            return query.order_by(*order)
-
-        return query
+                yield asc(col_name) if sort_asc else desc(col_name)
 
     async def get_many(self, **query):
-        #query = self._get_query_filtered(expression, **kwargs)
-        #return [o for o in await self.db_manager.execute(query)]
+        sort = self._parse_sortstr(query.pop('_sort', None))
+        limit = query.pop('_limit', None)
+        offset = query.pop('_offset', None)
 
-        sort = query.pop('_sort', None)
-        limit = query.pop('_limit', 0)
-        offset = query.pop('_offset', 0)
+        query_filtered = (
+            self.model.objects.filter(**query)
+                .build_select_expression()
+                .offset(offset)
+                .limit(limit)
+                .order_by(*sort)
+        )
 
-        return [o.__dict__ for o in await self.model.objects.filter(**query).all()]
+        return [o for o in await self.db_manager.database.fetch_all(query_filtered)]
 
     async def get_one(self, **query):
         try:
-            rv = await self.model.objects.get(**query)
-            return rv.__dict__
+            return await self.model.objects.get(**query)
         except (orm.exceptions.MultipleMatches, KeyError) as e:
             self.log.exception(e)
             raise DatabaseError
         except orm.exceptions.NoMatch:
             raise NoMatchFound
 
-    async def create(self, item: dict):
-        return await self.db_manager.create(self.model, **item)
+    async def create(self, **item: dict):
+        return await self.model.objects.create(**item)
 
-    async def get_or_create(self, item: dict):
-        return await self.db_manager.get_or_create(self.model, **item)
-
-    async def count(self, expression=None, **kwargs):
-        query = self._get_query_filtered(expression, **kwargs)
-        return await self.db_manager.count(query)
+    async def count(self, **query):
+        query = select([func.count()]).select_from(self.model.__table__)
+        return await self.db_manager.database.fetch_val(query)
 
     async def update(self, record, payload):
         if not isinstance(record, peewee.Model):

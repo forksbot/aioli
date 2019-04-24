@@ -115,7 +115,8 @@ def input_load(**schemas):
                 kwargs.update(schemas['path'].load(request.path_params))
 
             if 'body' in schemas:
-                kwargs.update({'body': schemas['body'].load(request.json)})
+                payload = await request.json()
+                kwargs.update({'body': schemas['body'].load(payload)})
 
             if 'query' in schemas:
                 kwargs.update({'query': schemas['query'].load(request.query_params)})

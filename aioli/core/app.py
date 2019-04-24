@@ -4,25 +4,26 @@ import logging
 import logging.config
 import traceback
 
+from json.decoder import JSONDecodeError
 from starlette.applications import Starlette
 from marshmallow.exceptions import ValidationError
 
 from aioli.exceptions import HTTPException
 from aioli.log import LOGGING_CONFIG_DEFAULTS
-from aioli.utils import jsonify
+from aioli.utils.http import jsonify
 from .settings import ApplicationSettings
 from .manager import mgr
 
 
-async def error_validation(_, exc):
-    """Marshmallow validation error"""
-
+async def validation_error(_, exc):
     return jsonify({'message': exc.messages}, status=422)
 
 
-async def http_error(_, exc):
-    """Custom Aioli errors"""
+async def decode_error(*_):
+    return jsonify({'message': 'Error decoding JSON'}, status=400)
 
+
+async def http_error(_, exc):
     return jsonify({'message': exc.detail}, status=exc.status_code)
 
 
@@ -35,13 +36,17 @@ class Application(Starlette):
     :param kwargs: kwargs to pass along to Sanic
     """
 
-    async def start(self):
+    async def startup(self):
         try:
             await mgr.attach(self)
             self.log.info('Ready for action')
         except Exception as e:
             self.log.critical(traceback.format_exc())
             raise e
+
+    async def shutdown(self):
+        self.log.info('Disconnecting from database...')
+        await mgr.db.database.disconnect()
 
     def __init__(self, packages=None, path='/api', cors_options=None, settings=None, **kwargs):
         # super(Application, self).__init__(False, [])
@@ -74,7 +79,11 @@ class Application(Starlette):
         # Apply known settings from ENV or provided `settings`
         self.config = ApplicationSettings(overrides, path).merged
 
-        self.router.lifespan.add_event_handler('startup', self.start)
+        # Lifespan handlers
+        self.router.lifespan.add_event_handler('startup', self.startup)
+        self.router.lifespan.add_event_handler('shutdown', self.shutdown)
 
+        # Error handlers
         self.add_exception_handler(HTTPException, http_error)
-        self.add_exception_handler(ValidationError, error_validation)
+        self.add_exception_handler(ValidationError, validation_error)
+        self.add_exception_handler(JSONDecodeError, decode_error)

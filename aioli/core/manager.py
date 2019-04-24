@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import asyncio
 import logging
 import inspect
-from os import getpid
 
 import sqlalchemy
 from starlette.applications import Starlette
@@ -10,8 +10,7 @@ from aiohttp import ClientSession
 
 from aioli.exceptions import InternalError
 from aioli.core.package import Package
-from aioli.db import DatabaseManager, BaseModel
-from aioli.utils import format_path
+from aioli.db import DatabaseManager
 
 
 class Manager:
@@ -20,7 +19,7 @@ class Manager:
     pkgs = []
     app: Starlette = None
     db = DatabaseManager
-    loop = None
+    loop = asyncio.get_event_loop()
     http_client: ClientSession
     log = logging.getLogger('aioli.manager')
 
@@ -75,7 +74,7 @@ class Manager:
                 pkg.log.info(f'Service {svc.__name__} initialized')
 
     async def _register_models(self):
-        """Registers Models with the application, and creates non-existent tables"""
+        """Registers Models with the application and performs table creation"""
 
         models = list(self.models)
 
@@ -85,13 +84,10 @@ class Manager:
         engine = sqlalchemy.create_engine(self.db.url)
 
         for pkg, model in models:
-            pkg.log.debug(f'Registering model: {model.__name__} [{model.__tablename__}]')
-            # self.db.create(engine)
-            model.register(pkg.name)
-            if not model.__table__.exists(engine):
-                model.__table__.create(engine)
+            model.__database__ = self.db.database
+            pkg.log.debug(f'Registering model: {model.__name__} [{model.__table__.name}]')
 
-            # await model.create()
+        self.db.metadata.create_all(engine)
 
     async def _register_controllers(self):
         """Registers Controllers with Application"""
@@ -108,7 +104,18 @@ class Manager:
             for handler, route in ctrl.stacks:
                 handler_addr = hex(id(handler))
                 handler_name = f'{pkg_name}.{route.name}'
+                import re
+
+                def format_path(*parts):
+                    path = ''
+
+                    for part in parts:
+                        path = f'/{path}/{part}'
+
+                    return re.sub(r'/+', '/', path.rstrip('/'))
+
                 path_full = format_path(path_base, pkg.path, route.path)
+                print(path_full)
                 pkg.log.debug(
                     f'Registering route: {path_full} [{route.method}] => '
                     f'{route.name} [{handler_addr}]'

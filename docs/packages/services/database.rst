@@ -15,7 +15,7 @@ Example
     from aioli.service import DatabaseService
     from aioli.exceptions import AioliException
 
-    from jet_guestbook.model import VisitModel
+    from aioli_guestbook.model import VisitModel
 
     class VisitService(DatabaseService):
         __model__ = VisitModel

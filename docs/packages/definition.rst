@@ -20,7 +20,7 @@ Packages are created using the :class:`aioli.Package` class, referencing one or 
 .. code-block:: python
 
     from aioli import Package
-    from jet_guestbook import service
+    from aioli_guestbook import service
     from .service import VisitService, VisitorService
     from .model import VisitModel, VisitorModel
     from .controller import Controller
@@ -34,4 +34,3 @@ Packages are created using the :class:`aioli.Package` class, referencing one or 
         name='guestbook',
         description='Example guestbook package'
     )
-
