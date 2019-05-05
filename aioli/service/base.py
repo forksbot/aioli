@@ -4,6 +4,7 @@ from uvloop.loop import Loop
 
 from aioli import Application
 from aioli.core.component import BaseComponent
+from .db import DatabaseService, DatabaseManager
 
 
 class BaseService(BaseComponent):
@@ -14,6 +15,7 @@ class BaseService(BaseComponent):
     :ivar loop: Asyncio event loop (uvloop)
     """
 
+    __model__ = None
     __instance = None
 
     def __new__(cls, *args, **kwargs):
@@ -23,18 +25,27 @@ class BaseService(BaseComponent):
 
     app: Application
     loop: Loop
+    _db = None
+    db_manager: DatabaseManager
 
     def on_ready(self):
-        """Called upon initialization"""
+        if self.__model__:
+            self._db = DatabaseService(self.db_manager, self.__model__)
+
+    @property
+    def db(self) -> DatabaseService:
+        return self._db
 
     @classmethod
-    def register(cls, pkg, mgr):
+    def register(cls, pkg, manager):
         """Class method used internally by the Aioli manager to register a Service
 
         :param pkg: instance of :class:`aioli.Package`
-        :param mgr: instance of :class:`Aioli.AioliManager`
+        :param manager: instance of :class:`Aioli.Manager`
         """
 
-        cls.loop = mgr.loop
-        cls.app = mgr.app
+        cls.loop = manager.loop
+        cls.app = manager.app
+        cls.pkgs = manager.pkgs
+        cls.db_manager = manager.db
         cls._pkg_bind(pkg)
