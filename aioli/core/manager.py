@@ -36,14 +36,14 @@ class Manager:
 
         return dict(self.pkgs).get(name)
 
-    def _load_packages(self, pkg_modules: list):
+    def _load_packages(self, pkg_modules):
         """Takes a list of Packages, tests their sanity and registers with manager"""
 
         for assigned_path, module in pkg_modules:
             if not hasattr(module, 'export'):
                 raise Exception(f'Missing package export in {module}')
             elif not isinstance(module.export, Package):
-                raise Exception(f'Invalid package type {module.pkg}: must be of type {Package}')
+                raise Exception(f'Invalid package type {module.export}: must be of type {Package}')
 
             export = module.export
 
@@ -62,7 +62,6 @@ class Manager:
 
         for pkg_name, pkg in self.pkgs:
             for svc in pkg.services:
-                # Make package available to Controller
                 svc.register(pkg, self)
                 svc_obj = svc()
 
