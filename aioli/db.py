@@ -26,12 +26,7 @@ class BaseModelMeta(models.ModelMetaclass):
             attrs['__tablename__'] = f"{pkg_name}__{attrs['__tablename__']}"
 
         attrs['__metadata__'] = DatabaseManager.metadata
-
-        new_model = super(BaseModelMeta, mcs).__new__(  # type: ignore
-            mcs, name, bases, attrs
-        )
-
-        return new_model
+        return super(BaseModelMeta, mcs).__new__(mcs, name, bases, attrs)
 
 
 class BaseModel(models.Model, metaclass=BaseModelMeta):
