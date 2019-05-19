@@ -2,15 +2,10 @@
 
 import pytest
 
-from sanic.response import json
-
-from aioli.core.package import Package
-from aioli.controller import BaseController, route
-
 
 @pytest.fixture
 def ctrl_default():
-    class TestController(BaseController):
+    class TestController(BaseHttpController):
         def on_request(self, request):
             return request
 
