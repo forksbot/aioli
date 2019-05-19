@@ -5,23 +5,33 @@ import logging
 import inspect
 
 import sqlalchemy
-from starlette.applications import Starlette
 from aiohttp import ClientSession
 
 from aioli.exceptions import InternalError
-from aioli.core.package import Package
 from aioli.db import DatabaseManager
+from aioli.utils.http import format_path
+from aioli.package.controller import BaseHttpController, BaseWebSocketController
+
+from .package import Package
 
 
 class Manager:
-    """Takes care of package registration and injection upon application start"""
+    """Takes care of registering packages, implements the Singleton pattern"""
+
+    __instance = None
 
     pkgs = []
-    app: Starlette = None
+    app = None
     db = DatabaseManager
     loop = asyncio.get_event_loop()
     http_client: ClientSession
     log = logging.getLogger('aioli.manager')
+
+    def __new__(cls, *args, **kwargs):
+        if not cls.__instance:
+            cls.__instance = super(Manager, cls).__new__(cls, *args, **kwargs)
+
+        return cls.__instance
 
     @property
     def models(self):
@@ -47,30 +57,30 @@ class Manager:
 
             export = module.export
 
-            if export.name in dict(self.pkgs).keys():
+            if export.name and export.name in dict(self.pkgs).keys():
                 raise Exception(f'Duplicate package name {export.name}')
+            if assigned_path:
+                export.path = assigned_path
 
             export.version = getattr(module, '__version__', '0.0.0')
-            export.path = assigned_path
 
             self.log.info(f'Attaching {export.name}/{export.version}')
-
             self.pkgs.append((export.name, export))
 
     async def _register_services(self):
         """Registers Services with Application"""
 
         for pkg_name, pkg in self.pkgs:
-            for svc in pkg.services:
-                svc.register(pkg, self)
-                svc_obj = svc()
+            for svccls in pkg.services:
+                pkg.log.debug(f'Service {svccls.__name__} initializing')
 
-                if inspect.iscoroutinefunction(svc_obj.on_ready):
-                    await svc_obj.on_ready()
+                svccls.register(pkg, self)
+                svc = svccls()
+
+                if inspect.iscoroutinefunction(svc.on_ready):
+                    await svc.on_ready()
                 else:
-                    svc_obj.on_ready()
-
-                pkg.log.info(f'Service {svc.__name__} initialized')
+                    svc.on_ready()
 
     async def _register_models(self):
         """Registers Models with the application and performs table creation"""
@@ -88,51 +98,60 @@ class Manager:
 
         self.db.metadata.create_all(engine)
 
+    async def _register_http_controller(self, pkg_name, pkg, ctrlcls):
+        ctrlcls.register(pkg)
+        ctrl = ctrlcls()
+
+        # Iterate over route stacks and register routes with the application
+        for handler, route in ctrl.stacks:
+            handler_addr = hex(id(handler))
+            handler_name = f'{pkg_name}.{route.name}'
+            self.log.critical(handler_name)
+
+            path_full = format_path(self.app.config['API_BASE'], pkg.path, route.path)
+            pkg.log.debug(
+                f'Registering route: {path_full} [{route.method}] => '
+                f'{route.name} [{handler_addr}]'
+            )
+
+            methods = [route.method]
+
+            self.app.add_route(path_full, handler, methods, handler_name)
+
+            # Inject full path into handler
+            route.path_full = path_full
+
+        await ctrl.on_ready()
+
+    async def _register_ws_controller(self, pkg, ctrlcls):
+        assert ctrlcls.path, 'Missing WebSocket path'
+
+        ctrlcls.register(pkg)
+
+        path_full = format_path(self.app.config['API_BASE'], ctrlcls.path)
+
+        pkg.log.debug(f'Registering WebSocket route: {path_full}')
+
+        self.app.add_websocket_route(path_full, ctrlcls, 'test')
+
     async def _register_controllers(self):
         """Registers Controllers with Application"""
 
         for pkg_name, pkg in self.pkgs:
-            pkg.log.info('Controller initializing')
-            path_base = self.app.config['API_BASE']
+            if not pkg.path:
+                continue
 
-            # Make package available to Controller
-            pkg.controller.register(pkg)
-            ctrl = pkg.controller = pkg.controller()
+            pkg.log.debug(f'Registering controllers')
 
-            # Iterate over route stacks and register routes with the application
-            for handler, route in ctrl.stacks:
-                handler_addr = hex(id(handler))
-                handler_name = f'{pkg_name}.{route.name}'
-                import re
+            for ctrlcls in pkg.controllers:
+                assert issubclass(ctrlcls, BaseHttpController) or issubclass(ctrlcls, BaseWebSocketController)
 
-                def format_path(*parts):
-                    path = ''
+                pkg.log.debug(f'Controller {ctrlcls.__name__} initializing')
 
-                    for part in parts:
-                        path = f'/{path}/{part}'
-
-                    return re.sub(r'/+', '/', path.rstrip('/'))
-
-                path_full = format_path(path_base, pkg.path, route.path)
-                print(path_full)
-                pkg.log.debug(
-                    f'Registering route: {path_full} [{route.method}] => '
-                    f'{route.name} [{handler_addr}]'
-                )
-
-                methods = [route.method]
-                self.app.add_route(path_full, handler, methods, handler_name)
-
-                # Inject full path into handler
-                route.path_full = path_full
-
-            # Let the Controller know we're ready to receive requests
-            if inspect.iscoroutinefunction(ctrl.on_ready):
-                await ctrl.on_ready()
-            else:
-                ctrl.on_ready()
-
-            pkg.log.info('Controller initialized')
+                if issubclass(ctrlcls, BaseHttpController):
+                    await self._register_http_controller(pkg_name, pkg, ctrlcls)
+                elif issubclass(ctrlcls, BaseWebSocketController):
+                    await self._register_ws_controller(pkg, ctrlcls)
 
     async def detach(self, *_):
         """Application stop-handler"""
@@ -162,6 +181,3 @@ class Manager:
 
         # app.log.info(f'Worker {getpid()} ready for action')
         self.log.info('Components loaded')
-
-
-mgr = Manager()
