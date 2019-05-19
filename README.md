@@ -7,20 +7,19 @@ aioli: async http api framework
 [![image](https://img.shields.io/codecov/c/github/rbw/aioli.svg?style=flat-square)](https://codecov.io/gh/rbw/aioli)
 [![image](https://img.shields.io/pypi/pyversions/aioli.svg?style=flat-square)](https://pypi.org/project/aioli/)
 
-The main idea with Aioli is to provide developers with a component system and set of tools for 
-building *Performant*, *Lightweight*, *Scalable* and *Portable* RESTful HTTP API packages.
-
-The Aioli component system provides a logical separation between *Requests/Response handling*, 
-*Transformation* and *Validation*, *Application logic* and *Data Access* layers.
+Aioli is a Framework for building Performant, Lightweight, Scalable and Portable WebSocket and RESTful HTTP API 
+packages. It provides a sensible separation between requests/response handling, transformation, 
+validation, application logic and data access layers. 
+ 
 
 Features
 ---
 
 - High performance and concurrency, lightweight
+- Built-in WebSocket and Redis/PubSub support
 - Horizontally scalable
-- Built-in WebSocket, Redis/PubSub support
 - Built-in ORM with support for PostgreSQL and MySQL
-- Provides intuitive tools for working with request and response data
+- Intuitive tools for working with request and response data
 - Created with [Docker](https://www.docker.com) and [Kubernetes](https://kubernetes.io) in mind
 
 Limitations
