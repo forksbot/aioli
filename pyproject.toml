@@ -8,7 +8,7 @@ license = 'BSD-2-Clause'
 [tool.poetry.dependencies]
 python = '^3.6'
 starlette = '^0.12.0b3'
-orm = '~0.1'
+orm = '~=0.1'
 databases = '^0.2.1'
 asyncpg = '^0.18.3'
 psycopg2-binary = '^2.8.1'
@@ -17,11 +17,14 @@ mysqlclient = '^1.4.2'
 aiohttp = '^3.5.4'
 uvloop = '^0.12.1'
 uvicorn = '^0.6.1'
+gunicorn = '^19.9.0'
 requests_async = '^0.2.0'
 marshmallow = '^3.0.0rc3'
 ujson = '^1.35'
 pyyaml = '^3.13'
+
 maxminddb-geolite2 = '*'
+asyncio_redis = '^0.15.1'
 
 [tool.poetry.dev-dependencies]
 twine = '^1.13'

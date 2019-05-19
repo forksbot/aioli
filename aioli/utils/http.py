@@ -1,11 +1,22 @@
 # -*- coding: utf-8 -*-
 
+import re
+
 import ujson
 
 from starlette.responses import Response
 
 
-def jsonify(content, status):
+def format_path(*parts):
+    path = ''
+
+    for part in parts:
+        path = f'/{path}/{part}'
+
+    return re.sub(r'/+', '/', path.rstrip('/'))
+
+
+def jsonify(content, status=200):
     return Response(
         content=ujson.dumps(content),
         status_code=status,
@@ -15,5 +26,3 @@ def jsonify(content, status):
 
 def request_ip(request):
     return request.client.host
-    # return request.remote_addr or request.ip
-

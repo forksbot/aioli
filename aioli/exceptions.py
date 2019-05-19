@@ -13,6 +13,11 @@ class AioliException(HTTPException):
         super(AioliException, self).__init__(status_code=status, detail=message)
 
 
+class InvalidChannelError(HTTPException):
+    def __init__(self):
+        super(InvalidChannelError, self).__init__(status_code=400, detail='Invalid channel provided')
+
+
 class DatabaseError(HTTPException):
     def __init__(self):
         super(DatabaseError, self).__init__(status_code=500, detail='Database error')
@@ -21,4 +26,3 @@ class DatabaseError(HTTPException):
 class NoMatchFound(HTTPException):
     def __init__(self, message='Not Found'):
         super(NoMatchFound, self).__init__(status_code=404, detail=message)
-

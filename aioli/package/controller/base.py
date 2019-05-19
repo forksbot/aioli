@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from starlette.endpoints import WebSocketEndpoint
+
 from aioli.registry import RouteRegistry
-from aioli.core.component import BaseComponent
+
+from .._component import Component
 
 
-class BaseController(BaseComponent):
-    """Controller base class"""
-
+class ControllerComponent(Component):
     @classmethod
     def register(cls, pkg):
         """Makes the package available to this controller.
@@ -16,9 +17,8 @@ class BaseController(BaseComponent):
 
         cls._pkg_bind(pkg)
 
-    async def on_ready(self):
-        """Called upon initialization"""
 
+class BaseHttpController(ControllerComponent):
     async def on_request(self, *args):
         """Called upon request arrival"""
 
@@ -37,5 +37,7 @@ class BaseController(BaseComponent):
             if stack.handler.__module__ == self.__module__:
                 yield getattr(self, stack.name), stack
 
-    def __repr__(self):
-        return f'<{self.__class__.__name__} at {hex(id(self))}>'
+
+class BaseWebSocketController(ControllerComponent, WebSocketEndpoint):
+    path = None
+    encoding = 'json'

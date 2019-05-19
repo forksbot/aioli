@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from aioli.core.package import Package
-
-from .core import Application, YamlSettings
-from .core.manager import mgr
 from .exceptions import AioliException
+from .package import Package
+from .manager import Manager
+from .app import Application
+from .settings import YamlSettings
+
 from .__version__ import __version__
