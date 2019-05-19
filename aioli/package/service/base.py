@@ -3,11 +3,12 @@
 from uvloop.loop import Loop
 
 from aioli import Application
-from aioli.core.component import BaseComponent
+from .._component import Component
+
 from .db import DatabaseService, DatabaseManager
 
 
-class BaseService(BaseComponent):
+class BaseService(Component):
     """The Service base class used for creating Package Services, it implements the
     singleton pattern as Services are commonly used in many parts of a Package.
 
@@ -18,17 +19,20 @@ class BaseService(BaseComponent):
     __model__ = None
     __instance = None
 
-    def __new__(cls, *args, **kwargs):
-        if not cls.__instance:
-            cls.__instance = super(BaseService, cls).__new__(cls, *args, **kwargs)
-        return cls.__instance
-
     app: Application
     loop: Loop
     _db = None
     db_manager: DatabaseManager
 
-    def on_ready(self):
+    def __new__(cls, *args, **kwargs):
+        if not cls.__instance:
+            cls.__instance = super(BaseService, cls).__new__(cls, *args, **kwargs)
+        return cls.__instance
+
+    def __call__(self, *args, **kwargs):
+        assert self.pkg, f'Attempted to use unregistered Aioli Service: {self.__class__.__name__}'
+
+    async def on_ready(self):
         if self.__model__:
             self._db = DatabaseService(self.db_manager, self.__model__)
 

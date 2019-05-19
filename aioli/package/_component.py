@@ -1,0 +1,19 @@
+# -*- coding: utf-8 -*-
+
+
+class Component:
+    pkg = None
+    log = None
+    path = '/'
+
+    @classmethod
+    def _pkg_bind(cls, pkg):
+        cls.pkg = pkg
+        cls.path = pkg.path or '' + cls.path
+        cls.log = pkg.log
+
+    async def on_ready(self):
+        """Called upon initialization"""
+
+    def __repr__(self):
+        return f'<{self.__class__.__name__} at {hex(id(self))}>'

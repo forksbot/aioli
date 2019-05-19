@@ -21,4 +21,3 @@ class DatabaseError(HTTPException):
 class NoMatchFound(HTTPException):
     def __init__(self, message='Not Found'):
         super(NoMatchFound, self).__init__(status_code=404, detail=message)
-

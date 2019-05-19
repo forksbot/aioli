@@ -12,7 +12,7 @@ from aioli.exceptions import HTTPException
 from aioli.log import LOGGING_CONFIG_DEFAULTS
 from aioli.utils.http import jsonify
 from .settings import ApplicationSettings
-from .manager import mgr
+from .manager import Manager
 
 
 async def validation_error(_, exc):
@@ -38,7 +38,7 @@ class Application(Starlette):
 
     async def startup(self):
         try:
-            await mgr.attach(self)
+            await self.mgr.attach(self)
             self.log.info('Ready for action')
         except Exception as e:
             self.log.critical(traceback.format_exc())
@@ -46,7 +46,7 @@ class Application(Starlette):
 
     async def shutdown(self):
         self.log.info('Disconnecting from database...')
-        await mgr.db.database.disconnect()
+        await self.mgr.db.database.disconnect()
 
     def __init__(self, packages=None, path='/api', cors_options=None, settings=None, **kwargs):
         # super(Application, self).__init__(False, [])
@@ -67,10 +67,12 @@ class Application(Starlette):
             **kwargs
         )
 
-        for name, logger in LOGGING_CONFIG_DEFAULTS['loggers'].items():
-            logger['level'] = 'DEBUG' if overrides.get('DEBUG') else 'INFO'
+        self.mgr = Manager()
 
-        logging.config.dictConfig(LOGGING_CONFIG_DEFAULTS)
+        #for name, logger in LOGGING_CONFIG_DEFAULTS['loggers'].items():
+        #    logger['level'] = 'DEBUG' if overrides.get('DEBUG') else 'INFO'
+
+        #logging.config.dictConfig(LOGGING_CONFIG_DEFAULTS)
 
         # Application root logger
         self.log = logging.getLogger('aioli.core')

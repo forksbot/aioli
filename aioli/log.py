@@ -11,6 +11,16 @@ LOGGING_CONFIG_DEFAULTS = dict(
             'handlers': ['pkg_console'],
             'propagate': False,
         },
+        'databases': {
+            'level': 'DEBUG',
+            'handlers': ['pkg_console'],
+            'propagate': False,
+        },
+        'sqlalchemy': {
+            'level': 'DEBUG',
+            'handlers': ['pkg_console'],
+            'propagate': False,
+        },
         'aioli': {
             'level': 'DEBUG',
             'handlers': ['pkg_console'],
