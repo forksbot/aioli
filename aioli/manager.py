@@ -98,15 +98,14 @@ class Manager:
 
         self.db.metadata.create_all(engine)
 
-    async def _register_http_controller(self, pkg_name, pkg, ctrlcls):
+    async def _register_http_controller(self, pkg, ctrlcls):
         ctrlcls.register(pkg)
         ctrl = ctrlcls()
 
         # Iterate over route stacks and register routes with the application
         for handler, route in ctrl.stacks:
             handler_addr = hex(id(handler))
-            handler_name = f'{pkg_name}.{route.name}'
-            self.log.critical(handler_name)
+            handler_name = f'{pkg.name}.{route.name}'
 
             path_full = format_path(self.app.config['API_BASE'], pkg.path, route.path)
             pkg.log.debug(
@@ -128,11 +127,17 @@ class Manager:
 
         ctrlcls.register(pkg)
 
-        path_full = format_path(self.app.config['API_BASE'], ctrlcls.path)
+        path_full = format_path(self.app.config['API_BASE'], pkg.path, ctrlcls.path)
 
         pkg.log.debug(f'Registering WebSocket route: {path_full}')
 
         self.app.add_websocket_route(path_full, ctrlcls, 'test')
+
+    async def _register_controller(self, pkg, ctrlcls):
+        if issubclass(ctrlcls, BaseWebSocketController):
+            return await self._register_ws_controller(pkg, ctrlcls)
+
+        return await self._register_http_controller(pkg, ctrlcls)
 
     async def _register_controllers(self):
         """Registers Controllers with Application"""
@@ -148,10 +153,7 @@ class Manager:
 
                 pkg.log.debug(f'Controller {ctrlcls.__name__} initializing')
 
-                if issubclass(ctrlcls, BaseHttpController):
-                    await self._register_http_controller(pkg_name, pkg, ctrlcls)
-                elif issubclass(ctrlcls, BaseWebSocketController):
-                    await self._register_ws_controller(pkg, ctrlcls)
+                await self._register_controller(pkg, ctrlcls)
 
     async def detach(self, *_):
         """Application stop-handler"""

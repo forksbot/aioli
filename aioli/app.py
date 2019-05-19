@@ -72,7 +72,7 @@ class Application(Starlette):
         #for name, logger in LOGGING_CONFIG_DEFAULTS['loggers'].items():
         #    logger['level'] = 'DEBUG' if overrides.get('DEBUG') else 'INFO'
 
-        #logging.config.dictConfig(LOGGING_CONFIG_DEFAULTS)
+        logging.config.dictConfig(LOGGING_CONFIG_DEFAULTS)
 
         # Application root logger
         self.log = logging.getLogger('aioli.core')
