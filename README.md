@@ -32,35 +32,13 @@ Limitations
 Package Index
 --
 
-The https://pkgs.aioli.dev website shows useful info about verified Packages', such as trust status,
+The https://pkgs.aioli.dev website shows useful info about verified packages; Trust status,
 install instructions, author and license data, as well as links to source code and more.
-
-1. Install Aioli
-
-`$ pip install aioli`
-
-2. Create a new Github repository and clone it
-
-`$ git clone <Github repository URL>`
-
-3. Initialize the Package 
-```
-$ aioli pkg init <name>
-
-** Add base structure
-** Add .gitignore
-** Add poetry config
-** Add pytest.ini
-** Add README.md
-** Add LICENSE
-** Add .travis.yml
-```
-
 
 Documentation
 ---
 
-The documentation is available at [https://aioli.rtfd.io](https://aioli.rtfd.io). 
+The documentation is (not yet) available at [https://aioli.rtfd.io](https://aioli.rtfd.io). 
 
 
 Examples
