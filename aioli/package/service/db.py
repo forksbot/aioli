@@ -11,9 +11,7 @@ from aioli.exceptions import AioliException, NoMatchFound
 class DatabaseService:
     """Service class providing an interface for common database operations"""
 
-    manager: DatabaseManager
-
-    def __init__(self, manager, model):
+    def __init__(self, manager: DatabaseManager, model: orm.models.Model):
         self.model = model
         self.relations = self._get_relations()
         self.manager = manager
@@ -29,7 +27,7 @@ class DatabaseService:
         return relations
 
     @property
-    def extended(self):
+    def objects_joined(self):
         if self.relations:
             return self.objects.select_related(self.relations)
 
@@ -64,12 +62,19 @@ class DatabaseService:
         limit = params.pop('_limit', None)
         offset = params.pop('_offset', None)
 
-        return await self.extended.filter(**params).limit(limit).all()
+        expr = self.objects_joined.build_select_expression().limit(10)
+        rows = await self.manager.database.fetch_all(expr)
+        for row in self.model.from_row(rows, select_related=self.model.):
+            print(row)
+
+        return []
+
+        # return await self.objects_joined.filter(**params).all()
 
     async def get_one(self, load_related=True, **query):
         try:
             if load_related:
-                return await self.extended.get(**query)
+                return await self.objects_joined.get(**query)
 
             return await self.objects.get(**query)
         except (orm.exceptions.MultipleMatches, KeyError) as e:
@@ -85,7 +90,7 @@ class DatabaseService:
         # query = select([func.count()], **params).select_from(self.model.__table__)
         #query = select([func.count()]).select_from(self.model.__table__)
         #return await self.manager.database.fetch_val(query)
-        query = self.extended.filter(**params)
+        query = self.objects_joined.filter(**params)
         # return await query.count()
         return 0
 
