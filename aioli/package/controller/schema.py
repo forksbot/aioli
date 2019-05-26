@@ -5,9 +5,10 @@ from marshmallow import validate
 
 
 class ParamsSchema(Schema):
-    _limit = fields.Integer(missing=100, validate=validate.Range(min=0))
-    _offset = fields.Integer(missing=0, validate=validate.Range(min=0))
-    _sort = fields.String(missing='')
+    limit = fields.Integer(missing=100, validate=validate.Range(min=0))
+    offset = fields.Integer(missing=0, validate=validate.Range(min=0))
+    sort = fields.String(missing='')
+    query = fields.String(missing='')
 
 
 class CountSchema(Schema):
