@@ -35,3 +35,5 @@ class ModelMeta(models.ModelMetaclass):
 class Model(models.Model, metaclass=ModelMeta):
     __abstract__ = True
     __metadata__ = None
+    __tablename__ = None
+    __table__ = None
