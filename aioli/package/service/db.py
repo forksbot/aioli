@@ -109,7 +109,7 @@ class DatabaseService:
 
             if isinstance(value, Model):
                 value = value.pk
-            elif op in [FilterOperator.CONTAINS, FilterOperator.ICONTAINS]:
+            elif op in [FilterOperator.CONTAINS.name, FilterOperator.ICONTAINS.name]:
                 value = "%" + value + "%"
 
             clause = getattr(column, op_attr)(value)
@@ -124,19 +124,19 @@ class DatabaseService:
         return None
 
     async def get_many(self, query=None, sort=None, limit=None, offset=None):
-        expr = self.objects_joined.build_select_expression().limit(limit).offset(offset)
+        stmt = self.objects_joined.build_select_expression().limit(limit).offset(offset)
 
         if query:
             clauses = dict([clause.split('=') for clause in query.split(',')])
-            expr = expr.where(self._parse_query(**clauses))
+            stmt = stmt.where(self._parse_query(**clauses))
 
         if sort:
             sort_fields = self._parse_sortstr(sort)
-            expr = expr.order_by(*sort_fields)
+            stmt = stmt.order_by(*sort_fields)
 
         return [
             self.model.from_row(row, select_related=self.relations)
-            for row in await self.manager.database.fetch_all(expr)
+            for row in await self.manager.database.fetch_all(stmt)
         ]
 
     async def get_one(self, load_related=True, **kwargs) -> any:
@@ -154,8 +154,8 @@ class DatabaseService:
         return await self.model.objects.create(**item)
 
     async def count(self, **kwargs):
-        expr = self._parse_query(**kwargs)
-        query = select([func.count()]).select_from(self.model.__table__).where(expr)
+        clauses = self._parse_query(**kwargs)
+        query = select([func.count()]).select_from(self.model.__table__).where(clauses)
         return await self.manager.database.fetch_val(query)
 
     async def update(self, record, payload):

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from aioli.utils.http import format_path
-
 
 class Component:
     pkg = None
