@@ -15,6 +15,11 @@ from .settings import ApplicationSettings
 from .manager import Manager
 
 
+async def server_error(_, exc):
+    if isinstance(exc, NotImplementedError):
+        return jsonify({'message': 'Not implemented'}, status=500)
+
+
 async def validation_error(_, exc):
     return jsonify({'message': exc.messages}, status=422)
 
@@ -89,3 +94,4 @@ class Application(Starlette):
         self.add_exception_handler(HTTPException, http_error)
         self.add_exception_handler(ValidationError, validation_error)
         self.add_exception_handler(JSONDecodeError, decode_error)
+        # self.add_exception_handler(Exception, server_error)
