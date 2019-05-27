@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from enum import Enum
+
 import orm
 
 from sqlalchemy import select, func, desc, asc, text, sql
@@ -7,6 +9,18 @@ from sqlalchemy import select, func, desc, asc, text, sql
 from aioli.db import Model
 from aioli.manager import DatabaseManager
 from aioli.exceptions import AioliException, NoMatchFound
+
+
+class FilterOperator(Enum):
+    EXACT = "__eq__"
+    IEXACT = "ilike"
+    CONTAINS = "like"
+    ICONTAINS = "ilike"
+    IN = "in_"
+    GT = "__gt__"
+    GTE = "__ge__"
+    LT = "__lt__"
+    LTE = "__le__"
 
 
 class DatabaseService:
@@ -62,17 +76,15 @@ class DatabaseService:
 
     def _parse_query(self, **kwargs):
         # @TODO - implement _model_has_attrs for local and referenced values
+        # @TODO - split up method, reuse in _parse_sortstr
 
         clauses = []
 
         for key, value in kwargs.items():
             if "__" in key:
                 parts = key.split("__")
-                op = parts[-1]
 
-                if op not in orm.models.FILTER_OPERATORS:
-                    raise AioliException(message=f"Unsupported operator: {op}", status=400)
-
+                op = parts[-1].upper()
                 field_name = parts[-2]
                 related_tbl = parts[:-2]
 
@@ -84,14 +96,20 @@ class DatabaseService:
                 else:
                     column = self.model.__table__.columns[field_name]
             else:
-                op = "exact"
+                op = FilterOperator.EXACT
                 column = self.model.__table__.columns[key]
 
-            op_attr = orm.models.FILTER_OPERATORS[op]
+            try:
+                op_attr = FilterOperator[op].value
+            except KeyError:
+                raise AioliException(
+                    message=f"Invalid operator: {op}, available: {[e.name for e in FilterOperator]}",
+                    status=400
+                )
 
             if isinstance(value, Model):
                 value = value.pk
-            elif op in ["contains", "icontains"]:
+            elif op in [FilterOperator.CONTAINS, FilterOperator.ICONTAINS]:
                 value = "%" + value + "%"
 
             clause = getattr(column, op_attr)(value)
