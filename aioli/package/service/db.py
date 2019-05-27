@@ -2,8 +2,9 @@
 
 import orm
 
-from sqlalchemy import select, func, desc, asc
+from sqlalchemy import select, func, desc, asc, text, sql
 
+from aioli.db import Model
 from aioli.manager import DatabaseManager
 from aioli.exceptions import AioliException, NoMatchFound
 
@@ -11,7 +12,7 @@ from aioli.exceptions import AioliException, NoMatchFound
 class DatabaseService:
     """Service class providing an interface for common database operations"""
 
-    def __init__(self, manager: DatabaseManager, model: orm.models.Model):
+    def __init__(self, manager: DatabaseManager, model: Model):
         self.model = model
         self.relations = self._get_relations()
         self.manager = manager
@@ -48,35 +49,84 @@ class DatabaseService:
         if not value:
             return None
 
-        for col_name in value.split(','):
+        for colname in value.split(','):
             sort_asc = True
-            if col_name.startswith('-'):
-                col_name = col_name[1:]
+            if colname.startswith('-'):
+                colname = colname[1:]
                 sort_asc = False
 
-            if self._model_has_attrs(col_name):
-                yield asc(col_name) if sort_asc else desc(col_name)
+            if self._model_has_attrs(colname):
+                # @TODO - add support for ordering by related fields
+                tbl_colname = text(f'{self.model.__tablename__}.{colname}')
+                yield asc(tbl_colname) if sort_asc else desc(tbl_colname)
 
-    async def get_many(self, **params):
-        sort = self._parse_sortstr(params.pop('_sort', None))
-        limit = params.pop('_limit', None)
-        offset = params.pop('_offset', None)
+    def _parse_query(self, **kwargs):
+        # @TODO - implement _model_has_attrs for local and referenced values
 
-        expr = self.objects_joined.build_select_expression().limit(10)
-        rows = await self.manager.database.fetch_all(expr)
-        for row in self.model.from_row(rows, select_related=self.model.):
-            print(row)
+        clauses = []
 
-        return []
+        for key, value in kwargs.items():
+            if "__" in key:
+                parts = key.split("__")
+                op = parts[-1]
 
-        # return await self.objects_joined.filter(**params).all()
+                if op not in orm.models.FILTER_OPERATORS:
+                    raise AioliException(message=f"Unsupported operator: {op}", status=400)
 
-    async def get_one(self, load_related=True, **query):
+                field_name = parts[-2]
+                related_tbl = parts[:-2]
+
+                if len(related_tbl) > 1:
+                    raise AioliException(message="Unsupported query depth", status=400)
+                elif len(related_tbl) == 1:
+                    model = self.model.fields.get(related_tbl[0]).to
+                    column = model.__table__.columns[field_name]
+                else:
+                    column = self.model.__table__.columns[field_name]
+            else:
+                op = "exact"
+                column = self.model.__table__.columns[key]
+
+            op_attr = orm.models.FILTER_OPERATORS[op]
+
+            if isinstance(value, Model):
+                value = value.pk
+            elif op in ["contains", "icontains"]:
+                value = "%" + value + "%"
+
+            clause = getattr(column, op_attr)(value)
+            clauses.append(clause)
+
+        if clauses:
+            if len(clauses) == 1:
+                return clauses[0]
+            else:
+                return sql.and_(*clauses)
+
+        return None
+
+    async def get_many(self, query=None, sort=None, limit=None, offset=None):
+        expr = self.objects_joined.build_select_expression().limit(limit).offset(offset)
+
+        if query:
+            clauses = dict([clause.split('=') for clause in query.split(',')])
+            expr = expr.where(self._parse_query(**clauses))
+
+        if sort:
+            sort_fields = self._parse_sortstr(sort)
+            expr = expr.order_by(*sort_fields)
+
+        return [
+            self.model.from_row(row, select_related=self.relations)
+            for row in await self.manager.database.fetch_all(expr)
+        ]
+
+    async def get_one(self, load_related=True, **kwargs) -> any:
         try:
             if load_related:
-                return await self.objects_joined.get(**query)
+                return await self.objects_joined.get(**kwargs)
 
-            return await self.objects.get(**query)
+            return await self.objects.get(**kwargs)
         except (orm.exceptions.MultipleMatches, KeyError) as e:
             raise AioliException(e)
         except orm.exceptions.NoMatch:
@@ -85,26 +135,13 @@ class DatabaseService:
     async def create(self, **item: dict):
         return await self.model.objects.create(**item)
 
-    async def count(self, **params):
-        # query = self.model.objects.filter()
-        # query = select([func.count()], **params).select_from(self.model.__table__)
-        #query = select([func.count()]).select_from(self.model.__table__)
-        #return await self.manager.database.fetch_val(query)
-        query = self.objects_joined.filter(**params)
-        # return await query.count()
-        return 0
+    async def count(self, **kwargs):
+        expr = self._parse_query(**kwargs)
+        query = select([func.count()]).select_from(self.model.__table__).where(expr)
+        return await self.manager.database.fetch_val(query)
 
     async def update(self, record, payload):
-        if not isinstance(record, peewee.Model):
-            record = await self.get_one(record)
-
-        for k, v in payload.items():
-            setattr(record, k, v)
-
-        await self.db_manager.update(record)
-        return record
+        pass
 
     async def delete(self, record_id: int):
-        record = await self.get_one(record_id)
-        deleted = await self.db_manager.delete(record)
-        return {'deleted': deleted}
+        pass
