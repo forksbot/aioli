@@ -1,7 +1,30 @@
 # -*- coding: utf-8 -*-
 
-from marshmallow import *
+import ujson
+import marshmallow
+
 from marshmallow import validate
+from marshmallow import *
+
+
+class JsonSerializer:
+    @staticmethod
+    def loads(data, **kwargs):
+        return ujson.loads(data, **kwargs)
+
+    @staticmethod
+    def dumps(data, **kwargs):
+        return ujson.dumps(data, **kwargs)
+
+
+class SchemaOpts(marshmallow.schema.SchemaOpts):
+    def __init__(self, meta, **kwargs):
+        super(SchemaOpts, self).__init__(meta, **kwargs)
+        self.render_module = JsonSerializer
+
+
+class Schema(marshmallow.schema.BaseSchema, metaclass=marshmallow.schema.SchemaMeta):
+    OPTIONS_CLASS = SchemaOpts
 
 
 class ParamsSchema(Schema):
