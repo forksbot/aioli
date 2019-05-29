@@ -7,7 +7,6 @@ from orm import models
 
 
 class DatabaseManager:
-    engine = None
     url = None
     database: databases.Database = None
     metadata = sqlalchemy.MetaData()
