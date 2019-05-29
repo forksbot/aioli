@@ -5,66 +5,25 @@ Route decorators are executed in the reversed order.
 output_dump -> input_load -> route
 """
 
-from enum import Enum
 from functools import wraps
 
-import ujson
 from starlette.requests import Request
 from starlette.responses import Response
 
 from aioli.registry import RouteRegistry
+from aioli.consts import Method
 
 
-class Method(Enum):
-    GET = 'GET'
-    POST = 'POST'
-    PUT = 'PUT'
-    PATCH = 'PATCH'
-    DELETE = 'DELETE'
-    HEAD = 'HEAD'
-    CONNECT = 'CONNECT'
-    OPTIONS = 'OPTIONS'
-    TRACE = 'TRACE'
-
-
-def _schema_prepare(schema_cls, **kwargs):
-    """Makes schema ready for use with Aioli
-
-    1) Takes a schema class
-    2) Creates `Meta` subclass if not set
-    3) Sets `ujson` render_module
-
-    :param schema_cls: Marshmallow.Schema class
-    :param kwargs: Kwargs to pass along to Marshmallow.Schema constructor
-    :return: instance of `schema_cls`
-    """
-
-    schema = schema_cls(**kwargs)
-    from marshmallow.schema import SchemaMeta
-    if not hasattr(schema, 'Meta'):
-        schema.Meta = type('Meta', (SchemaMeta,), {})
-
-    m = schema.Meta
-    m.render_module = ujson
-
-    if not hasattr(m, 'load_only'):
-        m.load_only = []
-    if not hasattr(m, 'dump_only'):
-        m.dump_only = []
-
-    return schema
-
-
-def output_dump(schema_cls, status=200, many=False):
+def output_dump(schema, status=200, many=False):
     """Returns a transformed and serialized Response
 
-    :param schema_cls: Marshmallow.Schema class
+    :param schema: Marshmallow.Schema class
     :param status: Return status (on success)
     :param many: Whether to return a list or single object
     :return: Response
     """
 
-    schema = _schema_prepare(schema_cls, many=many)
+    schema = schema(many=many)
 
     def wrapper(fn):
         @wraps(fn)
@@ -79,7 +38,7 @@ def output_dump(schema_cls, status=200, many=False):
 
             # Return HTTP encoded JSON response
             return Response(
-                content=schema.dumps(rv, indent=4),
+                content=schema.dumps(rv, indent=4, ensure_ascii=False).encode('utf8'),
                 status_code=status,
                 headers={'content-type': 'application/json'}
             )
@@ -102,7 +61,7 @@ def input_load(**schemas):
     :return: Route handler
     """
 
-    schemas = {k: _schema_prepare(v) for k, v in schemas.items()}
+    schemas = {part: schema() for part, schema in schemas.items()}
 
     def wrapper(fn):
         @wraps(fn)
