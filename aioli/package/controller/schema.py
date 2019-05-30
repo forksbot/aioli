@@ -21,6 +21,7 @@ class SchemaOpts(marshmallow.schema.SchemaOpts):
     def __init__(self, meta, **kwargs):
         super(SchemaOpts, self).__init__(meta, **kwargs)
         self.render_module = JsonSerializer
+        self.unknown = 'EXCLUDE'
 
 
 class Schema(marshmallow.schema.BaseSchema, metaclass=marshmallow.schema.SchemaMeta):
@@ -34,9 +35,10 @@ class ParamsSchema(Schema):
     query = fields.String(missing='')
 
 
+class HeadersSchema(Schema):
+    host = fields.String()
+    user_agent = fields.String(data_key='user-agent')
+
+
 class CountSchema(Schema):
     count = fields.Integer()
-
-
-class DeleteSchema(Schema):
-    deleted = fields.Integer()
