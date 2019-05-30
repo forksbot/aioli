@@ -42,8 +42,8 @@ install instructions, author and license data, as well as links to source code a
 Examples
 ---
 
-- [Aioli Guestbook Example](https://github.com/rbw/aioli-example-guestbook): Comprehensive RESTful HTTP API
-- [Monsoon](https://github.com/rbw/monsoon): Livestatus WebSocket relay and RESTful HTTP API
+- [Aioli Guestbook Example](https://github.com/rbw/aioli-example-guestbook): Comprehensive RESTful HTTP API.
+- [Monsoon](https://github.com/rbw/monsoon): RESTful HTTP API and WebSocket relay for Livestatus.
 
 
 Project status
