@@ -18,11 +18,8 @@ def format_path(*parts):
 
 def jsonify(content, status=200):
     return Response(
-        content=ujson.dumps(content),
+        content=ujson.dumps(content, ensure_ascii=False).encode('utf8'),
         status_code=status,
         headers={'content-type': 'application/json'}
     )
 
-
-def request_ip(request):
-    return request.client.host
