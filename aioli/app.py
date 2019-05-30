@@ -6,9 +6,10 @@ import traceback
 
 from json.decoder import JSONDecodeError
 from starlette.applications import Starlette
+from starlette.middleware.cors import CORSMiddleware
 from marshmallow.exceptions import ValidationError
 
-from aioli.exceptions import HTTPException
+from aioli.exceptions import HTTPException, AioliException
 from aioli.log import LOGGING_CONFIG_DEFAULTS
 from aioli.utils.http import jsonify
 from .settings import ApplicationSettings
@@ -91,7 +92,11 @@ class Application(Starlette):
         self.router.lifespan.add_event_handler('shutdown', self.shutdown)
 
         # Error handlers
+        self.add_exception_handler(AioliException, http_error)
         self.add_exception_handler(HTTPException, http_error)
         self.add_exception_handler(ValidationError, validation_error)
         self.add_exception_handler(JSONDecodeError, decode_error)
-        # self.add_exception_handler(Exception, server_error)
+        #self.add_exception_handler(Exception, server_error)
+
+        # Middleware
+        self.add_middleware(CORSMiddleware, allow_origins=['*'])
