@@ -1,7 +1,7 @@
 [tool.poetry]
 name = 'aioli'
 version = '0.3.0'
-description = 'Framework for building performant and highly composable asyncio Web APIs'
+description = 'Framework for building performant and highly composable Web APIs'
 authors = ['Robert Wikman <rbw@vault13.org>']
 license = 'BSD-2-Clause'
 

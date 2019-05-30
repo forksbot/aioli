@@ -7,9 +7,8 @@ Aioli: HTTP API Framework
 [![image](https://img.shields.io/codecov/c/github/rbw/aioli.svg?style=flat-square)](https://codecov.io/gh/rbw/aioli)
 [![image](https://img.shields.io/pypi/pyversions/aioli.svg?style=flat-square)](https://pypi.org/project/aioli/)
 
-Aioli is a Framework for building performant and highly composable WebSocket and RESTful HTTP API packages using asyncio. 
-It provides a sensible separation between requests/response handling, transformation, 
-validation, application logic and data access layers. 
+Aioli is a Framework for building performant and highly composable WebSocket and RESTful HTTP API packages using Python 3 Asyncio. 
+It provides a sensible separation between requests/response handling (transformation, validation, etc), application logic and data access layers.
 
 
 Features
