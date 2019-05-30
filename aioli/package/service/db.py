@@ -139,7 +139,7 @@ class DatabaseService:
             for row in await self.manager.database.fetch_all(stmt)
         ]
 
-    async def get_one(self, load_related=True, **kwargs) -> any:
+    async def get_one(self, load_related=True, **kwargs):
         try:
             if load_related:
                 return await self.objects_joined.get(**kwargs)
@@ -158,8 +158,11 @@ class DatabaseService:
         query = select([func.count()]).select_from(self.model.__table__).where(clauses)
         return await self.manager.database.fetch_val(query)
 
-    async def update(self, record, payload):
-        pass
+    async def update(self, record_id, payload):
+        record = await self.get_one(load_related=True, id=record_id)
+        await record.update(**payload)
+        return record
 
-    async def delete(self, record_id: int):
-        pass
+    async def delete(self, **kwargs):
+        record = await self.get_one(load_related=False, **kwargs)
+        await record.delete()
