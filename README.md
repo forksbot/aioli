@@ -1,4 +1,4 @@
-Aioli: HTTP API Framework
+Aioli: Non-blocking HTTP API Framework
 === 
 
 [![image](https://img.shields.io/github/license/rbw/aioli.svg?style=flat-square)](https://raw.githubusercontent.com/rbw/aioli/master/LICENSE)
@@ -7,15 +7,13 @@ Aioli: HTTP API Framework
 [![image](https://img.shields.io/codecov/c/github/rbw/aioli.svg?style=flat-square)](https://codecov.io/gh/rbw/aioli)
 [![image](https://img.shields.io/pypi/pyversions/aioli.svg?style=flat-square)](https://pypi.org/project/aioli/)
 
-Aioli is a Framework for building performant and highly composable WebSocket and RESTful HTTP API packages using Python 3 Asyncio. 
+Aioli is a Framework and Toolkit for building, shipping and running performant and highly composable WebSocket and RESTful HTTP APIs using Python 3 Asyncio. 
 It provides a sensible separation between requests/response handling (transformation, validation, etc), application logic and data access layers.
-
 
 Features
 ---
 
 - High performance and concurrency, lightweight
-- Built-in WebSocket and Redis/PubSub support
 - Horizontally scalable
 - Built-in ORM with support for PostgreSQL and MySQL
 - Intuitive tools for working with request and response data
@@ -43,15 +41,14 @@ The documentation is available at [https://docs.aioli.dev](https://docs.aioli.de
 Examples
 ---
 
-- [monsoon](https://github.com/rbw/monsoon) (Livestatus REST API)
-- [aioli-guestbook](https://github.com/rbw/aioli-guestbook) (CRUD guestbook example)
+- [Aioli Guestbook Example](https://github.com/rbw/aioli-example-guestbook): Comprehensive RESTful HTTP API
+- [Monsoon](https://github.com/rbw/monsoon): Livestatus WebSocket relay and RESTful HTTP API
 
 
 Project status
 ---
 
 Aioli is currently under heavy development; Expect some breakage, as well as lacking documentation and tests.
-That being said - I would very much appreciate people testing out the software, and perhaps even contribute with code.
 
 
 Contributing
