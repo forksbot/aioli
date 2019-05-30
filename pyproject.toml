@@ -29,7 +29,12 @@ asyncio_redis = '^0.15.1'
 [tool.poetry.dev-dependencies]
 twine = '^1.13'
 pytest = '^4.4.0'
-sphinx-rtd-theme = '^0.4.3'
+pytest-cov = '^2.7.1'
+autoflake = '^1.3'
+mkdocs = '^1.0.4'
+codecov = '^2.0.15'
+black = { version = "^19.3b0", allows-prereleases = true }
+
 
 [build-system]
 requires = ['poetry>=0.12']
