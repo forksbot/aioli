@@ -3,8 +3,8 @@
 import re
 from logging import getLogger
 
-NAME_REGEX = re.compile(r'^[a-zA-Z0-9-]*$')
-PATH_REGEX = re.compile(r'^/[a-zA-Z0-9-]*$')
+NAME_REGEX = re.compile(r"^[a-zA-Z0-9-]*$")
+PATH_REGEX = re.compile(r"^/[a-zA-Z0-9-]*$")
 
 
 class Package:
@@ -20,7 +20,15 @@ class Package:
     _path = None
     _name = None
 
-    def __init__(self, name, description, controllers=None, services=None, models=None, dependencies=None):
+    def __init__(
+        self,
+        name,
+        description,
+        controllers=None,
+        services=None,
+        models=None,
+        dependencies=None,
+    ):
         assert isinstance(controllers, list) or None
         assert isinstance(services, list) or None
 
@@ -31,7 +39,7 @@ class Package:
         self.models = models or []
         self.dependencies = dependencies or []
 
-        self.log = getLogger(f'aioli.pkg.{self.name}')
+        self.log = getLogger(f"aioli.pkg.{self.name}")
         self.description = description
 
     @property
@@ -56,9 +64,11 @@ class Package:
     @path.setter
     def path(self, value):
         if not PATH_REGEX.match(value):
-            raise Exception(f'Package {self.name} path must be a valid path, example: /my-package-1')
+            raise Exception(
+                f"Package {self.name} path must be a valid path, example: /my-package-1"
+            )
 
         self._path = value
 
     def __repr__(self):
-        return f'<{self.__class__.__name__} [{self.name}] at {hex(id(self))}>'
+        return f"<{self.__class__.__name__} [{self.name}] at {hex(id(self))}>"

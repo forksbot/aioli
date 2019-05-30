@@ -33,7 +33,7 @@ class HttpClientService(BaseService):
         :return: aiohttp.ClientResponse
         """
 
-        return await self.http_request('POST', url, data=payload)
+        return await self.http_request("POST", url, data=payload)
 
     async def http_get(self, url: str):
         """Creates a new HTTP GET request
@@ -42,7 +42,7 @@ class HttpClientService(BaseService):
         :return: aiohttp.ClientResponse
         """
 
-        return await self.http_request('GET', url)
+        return await self.http_request("GET", url)
 
     @classmethod
     def register(cls, pkg, mgr):

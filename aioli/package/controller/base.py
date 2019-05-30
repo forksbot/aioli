@@ -40,4 +40,4 @@ class BaseHttpController(ControllerComponent):
 
 class BaseWebSocketController(ControllerComponent, WebSocketEndpoint):
     path = None
-    encoding = 'json'
+    encoding = "json"

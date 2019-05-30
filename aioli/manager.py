@@ -25,7 +25,7 @@ class Manager:
     db = DatabaseManager
     loop = asyncio.get_event_loop()
     http_client: ClientSession
-    log = logging.getLogger('aioli.manager')
+    log = logging.getLogger("aioli.manager")
 
     def __new__(cls, *args, **kwargs):
         if not cls.__instance:
@@ -50,21 +50,23 @@ class Manager:
         """Takes a list of Packages, tests their sanity and registers with manager"""
 
         for assigned_path, module in pkg_modules:
-            if not hasattr(module, 'export'):
-                raise Exception(f'Missing package export in {module}')
+            if not hasattr(module, "export"):
+                raise Exception(f"Missing package export in {module}")
             elif not isinstance(module.export, Package):
-                raise Exception(f'Invalid package type {module.export}: must be of type {Package}')
+                raise Exception(
+                    f"Invalid package type {module.export}: must be of type {Package}"
+                )
 
             export = module.export
 
             if export.name and export.name in dict(self.pkgs).keys():
-                raise Exception(f'Duplicate package name {export.name}')
+                raise Exception(f"Duplicate package name {export.name}")
             if assigned_path:
                 export.path = assigned_path
 
-            export.version = getattr(module, '__version__', '0.0.0')
+            export.version = getattr(module, "__version__", "0.0.0")
 
-            self.log.info(f'Attaching {export.name}/{export.version}')
+            self.log.info(f"Attaching {export.name}/{export.version}")
             self.pkgs.append((export.name, export))
 
     async def _register_services(self):
@@ -72,7 +74,7 @@ class Manager:
 
         for pkg_name, pkg in self.pkgs:
             for svccls in pkg.services:
-                pkg.log.debug(f'Service {svccls.__name__} initializing')
+                pkg.log.debug(f"Service {svccls.__name__} initializing")
 
                 svccls.register(pkg, self)
                 svc = svccls()
@@ -88,13 +90,17 @@ class Manager:
         models = list(self.models)
 
         if models and not self.db.database:
-            raise InternalError('Unable to register models without a database connection')
+            raise InternalError(
+                "Unable to register models without a database connection"
+            )
 
         engine = sqlalchemy.create_engine(self.db.url)
 
         for pkg, model in models:
             model.__database__ = self.db.database
-            pkg.log.debug(f'Registering model: {model.__name__} [{model.__table__.name}]')
+            pkg.log.debug(
+                f"Registering model: {model.__name__} [{model.__table__.name}]"
+            )
 
         self.db.metadata.create_all(engine)
 
@@ -105,12 +111,12 @@ class Manager:
         # Iterate over route stacks and register routes with the application
         for handler, route in ctrl.stacks:
             handler_addr = hex(id(handler))
-            handler_name = f'{pkg.name}.{route.name}'
+            handler_name = f"{pkg.name}.{route.name}"
 
-            path_full = format_path(self.app.config['API_BASE'], pkg.path, route.path)
+            path_full = format_path(self.app.config["API_BASE"], pkg.path, route.path)
             pkg.log.debug(
-                f'Registering route: {path_full} [{route.method}] => '
-                f'{route.name} [{handler_addr}]'
+                f"Registering route: {path_full} [{route.method}] => "
+                f"{route.name} [{handler_addr}]"
             )
 
             methods = [route.method]
@@ -123,15 +129,15 @@ class Manager:
         await ctrl.on_ready()
 
     async def _register_ws_controller(self, pkg, ctrlcls):
-        assert ctrlcls.path, 'Missing WebSocket path'
+        assert ctrlcls.path, "Missing WebSocket path"
 
         ctrlcls.register(pkg)
 
-        path_full = format_path(self.app.config['API_BASE'], pkg.path, ctrlcls.path)
+        path_full = format_path(self.app.config["API_BASE"], pkg.path, ctrlcls.path)
 
-        pkg.log.debug(f'Registering WebSocket route: {path_full}')
+        pkg.log.debug(f"Registering WebSocket route: {path_full}")
 
-        self.app.add_websocket_route(path_full, ctrlcls, 'test')
+        self.app.add_websocket_route(path_full, ctrlcls, "test")
 
     async def _register_controller(self, pkg, ctrlcls):
         if issubclass(ctrlcls, BaseWebSocketController):
@@ -146,12 +152,14 @@ class Manager:
             if not pkg.path:
                 continue
 
-            pkg.log.debug(f'Registering controllers')
+            pkg.log.debug(f"Registering controllers")
 
             for ctrlcls in pkg.controllers:
-                assert issubclass(ctrlcls, BaseHttpController) or issubclass(ctrlcls, BaseWebSocketController)
+                assert issubclass(ctrlcls, BaseHttpController) or issubclass(
+                    ctrlcls, BaseWebSocketController
+                )
 
-                pkg.log.debug(f'Controller {ctrlcls.__name__} initializing')
+                pkg.log.debug(f"Controller {ctrlcls.__name__} initializing")
 
                 await self._register_controller(pkg, ctrlcls)
 
@@ -174,12 +182,12 @@ class Manager:
         # self.loop = loop
 
         # self.http_client = ClientSession(loop=loop)
-        if app.config['DB_URL']:
-            self.db = await DatabaseManager.init(app.config['DB_URL'])
+        if app.config["DB_URL"]:
+            self.db = await DatabaseManager.init(app.config["DB_URL"])
             await self._register_models()
 
         await self._register_controllers()
         await self._register_services()
 
         # app.log.info(f'Worker {getpid()} ready for action')
-        self.log.info('Components loaded')
+        self.log.info("Components loaded")

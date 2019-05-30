@@ -7,7 +7,6 @@ from orm import models
 
 
 class DatabaseManager:
-    engine = None
     url = None
     database: databases.Database = None
     metadata = sqlalchemy.MetaData()
@@ -22,13 +21,13 @@ class DatabaseManager:
 
 class ModelMeta(models.ModelMetaclass):
     def __new__(mcs, name, bases, attrs):
-        if '__tablename__' in attrs:
-            assert '__module__' in attrs
+        if "__tablename__" in attrs:
+            assert "__module__" in attrs
 
-            pkg_name = attrs['__module__'].split('.')[0]
-            attrs['__tablename__'] = f"{pkg_name}__{attrs['__tablename__']}"
+            pkg_name = attrs["__module__"].split(".")[0]
+            attrs["__tablename__"] = f"{pkg_name}__{attrs['__tablename__']}"
 
-        attrs['__metadata__'] = DatabaseManager.metadata
+        attrs["__metadata__"] = DatabaseManager.metadata
         return super(ModelMeta, mcs).__new__(mcs, name, bases, attrs)
 
 

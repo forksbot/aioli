@@ -11,11 +11,7 @@ class RouteStack:
     description = None
 
     def __init__(self):
-        self.schemas = {
-            'response': None,
-            'query': None,
-            'body': None
-        }
+        self.schemas = {"response": None, "query": None, "body": None}
 
     def __dict__(self):
         return self.__class__.__dict__

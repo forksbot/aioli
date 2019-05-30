@@ -30,7 +30,9 @@ class BaseService(Component):
         return cls.__instance
 
     def __call__(self, *args, **kwargs):
-        assert self.pkg, f'Attempted to use unregistered Aioli Service: {self.__class__.__name__}'
+        assert (
+            self.pkg
+        ), f"Service {self.__class__.__name__} is not registered with the application"
 
     async def on_ready(self):
         if self.__model__:

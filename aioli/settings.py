@@ -21,10 +21,10 @@ class YamlSettings:
 
 
 class CoreSchema(Schema):
-    listen_host = fields.String(missing='127.0.0.1')
+    listen_host = fields.String(missing="127.0.0.1")
     listen_port = fields.Integer(missing=5000)
     db_url = fields.String(missing=None)
-    api_base = fields.String(missing='/api')
+    api_base = fields.String(missing="/api")
     debug = fields.Bool(missing=False)
     workers = fields.Integer(missing=cpu_count())
     logo = fields.String(allow_none=True, missing=None)
@@ -49,7 +49,7 @@ class CoreSchema(Schema):
 class ApplicationSettings:
     def __init__(self, overrides, path=None):
         self._overrides = overrides
-        self._overrides['api_base'] = path
+        self._overrides["api_base"] = path
 
     @property
     def merged(self):
@@ -63,7 +63,7 @@ class ApplicationSettings:
                 if isinstance(field, fields.Integer):
                     value = int(value)
                 if isinstance(field, fields.Boolean):
-                    value = str(value).strip().lower() in ['1', 'true', 'yes']
+                    value = str(value).strip().lower() in ["1", "true", "yes"]
 
                 settings[name] = value
             elif nu in self._overrides:
