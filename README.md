@@ -35,15 +35,15 @@ The documentation is available at [https://docs.aioli.dev](https://docs.aioli.de
 Package Index
 --
 
-Shortly, [https://pkgs.aioli.dev](https://pkgs.aioli.dev) will show useful info about verified packages; 
-Trust status, install instructions, author and license data, as well as links to source code and more.
+Shortly, the [https://pkgs.aioli.dev](https://pkgs.aioli.dev) will show useful info about verified packages; Trust status,
+install instructions, author and license data, as well as links to source code and more.
 
 
 Examples
 ---
 
-- [Aioli Guestbook Example](https://github.com/rbw/aioli-example-guestbook): Comprehensive RESTful HTTP API.
-- [Monsoon](https://github.com/rbw/monsoon): RESTful HTTP API and WebSocket relay for Livestatus. 
+- [Aioli Guestbook Example](https://github.com/rbw/aioli-example-guestbook): Comprehensive RESTful HTTP API
+- [Monsoon](https://github.com/rbw/monsoon): Livestatus WebSocket relay and RESTful HTTP API
 
 
 Project status

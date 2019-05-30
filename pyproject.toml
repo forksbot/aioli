@@ -1,12 +1,13 @@
 [tool.poetry]
 name = 'aioli'
 version = '0.3.0'
-description = 'Framework for building performant and highly composable Web APIs'
+description = 'Non-blocking HTTP API Framework'
 authors = ['Robert Wikman <rbw@vault13.org>']
 license = 'BSD-2-Clause'
 
 [tool.poetry.dependencies]
 python = '^3.6'
+typesystem = { git = "https://github.com/rbw/typesystem.git", branch = "time-serialization" }
 starlette = '^0.12.0b3'
 orm = '~=0.1'
 databases = '^0.2.1'
@@ -22,9 +23,6 @@ requests_async = '^0.2.0'
 marshmallow = '^3.0.0rc3'
 ujson = '^1.35'
 pyyaml = '^3.13'
-
-maxminddb-geolite2 = '*'
-asyncio_redis = '^0.15.1'
 
 [tool.poetry.dev-dependencies]
 twine = '^1.13'

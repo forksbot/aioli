@@ -3,6 +3,9 @@ site_description: Framework for building performant and highly composable asynci
 
 theme:
     name: 'material'
+    palette:
+        primary: 'green'
+        accent: 'green'
 
 repo_name: aioli-framework/aioli
 repo_url: https://github.com/aioli-framework/aioli
