@@ -1,4 +1,4 @@
-aioli: async http api framework
+Aioli: HTTP API Framework
 === 
 
 [![image](https://img.shields.io/github/license/rbw/aioli.svg?style=flat-square)](https://raw.githubusercontent.com/rbw/aioli/master/LICENSE)
@@ -7,10 +7,9 @@ aioli: async http api framework
 [![image](https://img.shields.io/codecov/c/github/rbw/aioli.svg?style=flat-square)](https://codecov.io/gh/rbw/aioli)
 [![image](https://img.shields.io/pypi/pyversions/aioli.svg?style=flat-square)](https://pypi.org/project/aioli/)
 
-Aioli is a Framework for building Performant, Lightweight, Scalable and Portable WebSocket and RESTful HTTP API 
-packages. It provides a sensible separation between requests/response handling, transformation, 
-validation, application logic and data access layers. 
- 
+Aioli is a Framework for building performant and highly composable WebSocket and RESTful HTTP API packages using Python 3 Asyncio. 
+It provides a sensible separation between requests/response handling (transformation, validation, etc), application logic and data access layers.
+
 
 Features
 ---
@@ -32,13 +31,13 @@ Limitations
 Package Index
 --
 
-The https://pkgs.aioli.dev website shows useful info about verified packages; Trust status,
+The [https://pkgs.aioli.dev](https://pkgs.aioli.dev) website shows useful info about verified packages; Trust status,
 install instructions, author and license data, as well as links to source code and more.
 
 Documentation
 ---
 
-The documentation is (not yet) available at [https://aioli.rtfd.io](https://aioli.rtfd.io). 
+The documentation is available at [https://docs.aioli.dev](https://docs.aioli.dev). 
 
 
 Examples

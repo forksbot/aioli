@@ -1,4 +1,5 @@
 import os
+import aioli_sphinx_theme
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -14,7 +15,6 @@ version = about.get('__version__')
 
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinx.ext.coverage',
     'sphinx.ext.inheritance_diagram'
@@ -31,27 +31,35 @@ pygments_style = 'sphinx'
 
 
 # -- Options for HTML output -------------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-html_theme = 'alabaster'
-github_url = 'https://github.com/rbw/aioli'
-
-html_theme_options = {
-    'description': 'Framework for building structured, performant and scalable HTTP API applications',
-    'github_user': 'rbw',
-    'github_repo': 'aioli',
-    'github_button': True,
-    'github_type': 'star',
-    'sidebar_collapse': True
-}
+# templates_path = ['_templates']
 
 html_sidebars = {
-    '**': [
-        'about.html', 'navigation.html', 'searchbox.html',
-    ]
+    '**': ['globaltoc.html', 'localtoc.html']
 }
+
+#html_sidebars = {
+#    '**': [
+#        'about.html', 'navigation.html', 'searchbox.html',
+#    ]
+#}
+
+html_theme = 'aioli'
+html_context = {
+    'maintainer': 'Sphinx-themes test',
+    'project_pretty_name': 'Aioli Framework',
+}
+
+github_url = 'https://github.com/rbw/aioli'
+
+#html_theme_options = {
+#    'description': 'Framework for building structured, performant and scalable HTTP API applications',
+#    'github_user': 'rbw',
+#    'github_repo': 'aioli',
+#    'github_button': True,
+#    'github_type': 'star',
+#    'sidebar_collapse': True
+#}
+
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -115,4 +123,4 @@ texinfo_documents = [
 # -- Options for todo extension ----------------------------------------------
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+# todo_include_todos = True

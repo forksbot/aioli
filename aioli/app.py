@@ -79,8 +79,8 @@ class Application(Starlette):
 
         self.mgr = Manager()
 
-        # for name, logger in LOGGING_CONFIG_DEFAULTS['loggers'].items():
-        #    logger['level'] = 'DEBUG' if overrides.get('DEBUG') else 'INFO'
+        for name, logger in LOGGING_CONFIG_DEFAULTS['loggers'].items():
+            logger['level'] = 'DEBUG' if overrides.get('DEBUG') else 'INFO'
 
         logging.config.dictConfig(LOGGING_CONFIG_DEFAULTS)
 
