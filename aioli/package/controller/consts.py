@@ -3,6 +3,10 @@
 from enum import Enum
 
 
+class RequestProp(Enum):
+    client_addr = 'client.host'
+
+
 class Method(Enum):
     GET = 'GET'
     POST = 'POST'
