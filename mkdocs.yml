@@ -1,5 +1,5 @@
 site_name: Aioli Framework
-site_description: Framework for building performant and highly composable asyncio HTTP API packages
+site_description: Non-blocking HTTP API Framework and Toolkit
 
 theme:
     name: 'material'

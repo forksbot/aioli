@@ -8,7 +8,7 @@ Aioli: Non-blocking HTTP API Framework and Toolkit
 [![image](https://img.shields.io/pypi/pyversions/aioli.svg?style=flat-square)](https://pypi.org/project/aioli/)
 
 Aioli is a Framework and Toolkit for building, shipping and running performant and highly composable WebSocket and RESTful HTTP APIs using Python 3 Asyncio. 
-It provides a sensible separation between requests/response handling (transformation, validation, etc), application logic and data access layers.
+It provides a sensible separation between request/response handling (transformation, validation, etc), application logic and data access layers.
 
 Features
 ---
@@ -35,14 +35,14 @@ The documentation is available at [https://docs.aioli.dev](https://docs.aioli.de
 Package Index
 --
 
-Shortly, the [https://pkgs.aioli.dev](https://pkgs.aioli.dev) will show useful info about verified packages; Trust status,
+Shortly, the [https://pkgs.aioli.dev](https://pkgs.aioli.dev) website will show useful info about verified packages; Trust status,
 install instructions, author and license data, as well as links to source code and more.
 
 
 Examples
 ---
 
-- [Aioli Guestbook Example](https://github.com/rbw/aioli-example-guestbook): Comprehensive RESTful HTTP API.
+- [Aioli Guestbook Example](https://github.com/aioli-framework/aioli-guestbook-example): Comprehensive RESTful HTTP API.
 - [Monsoon](https://github.com/rbw/monsoon): RESTful HTTP API and WebSocket relay for Livestatus.
 
 
