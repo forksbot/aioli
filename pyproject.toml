@@ -1,39 +1,40 @@
 [tool.poetry]
-name = 'aioli'
-version = '0.3.0'
-description = 'Non-blocking HTTP API Framework'
-authors = ['Robert Wikman <rbw@vault13.org>']
-license = 'BSD-2-Clause'
+name = "aioli"
+version = "0.3.0"
+description = "Non-blocking HTTP API Framework and Toolkit"
+authors = ["Robert Wikman <rbw@vault13.org>"]
+license = "BSD-2-Clause"
 
 [tool.poetry.dependencies]
-python = '^3.6'
+python = "^3.6"
 typesystem = { git = "https://github.com/rbw/typesystem.git", branch = "time-serialization" }
-starlette = '^0.12.0b3'
-orm = '~=0.1'
-databases = '^0.2.1'
-asyncpg = '^0.18.3'
-psycopg2-binary = '^2.8.1'
-aiomysql = '^0.0.20'
-mysqlclient = '^1.4.2'
-aiohttp = '^3.5.4'
-uvloop = '^0.12.1'
-uvicorn = '^0.6.1'
-gunicorn = '^19.9.0'
-requests_async = '^0.2.0'
-marshmallow = '^3.0.0rc3'
-ujson = '^1.35'
-pyyaml = '^3.13'
+starlette = "^0.12.0b3"
+orm = "~=0.1"
+databases = "^0.2.1"
+asyncpg = "^0.18.3"
+psycopg2-binary = "^2.8.1"
+aiomysql = "^0.0.20"
+mysqlclient = "^1.4.2"
+aiohttp = "^3.5.4"
+uvloop = "^0.12.1"
+uvicorn = "^0.6.1"
+gunicorn = "^19.9.0"
+requests_async = "^0.2.0"
+marshmallow = "^3.0.0rc3"
+ujson = "^1.35"
+pyyaml = "^3.13"
 
 [tool.poetry.dev-dependencies]
-twine = '^1.13'
-pytest = '^4.4.0'
-pytest-cov = '^2.7.1'
-autoflake = '^1.3'
-mkdocs = '^1.0.4'
-mkdocs-material = '^4.3.1'
-codecov = '^2.0.15'
+twine = "^1.13"
+pytest = "^4.4.0"
+pytest-cov = "^2.7.1"
+autoflake = "^1.3"
+pydoc-markdown = "^2.0.5"
+mkdocs = "^1.0.4"
+mkdocs-material = "^4.3.1"
+codecov = "^2.0.15"
 black = { version = "^19.3b0", allows-prereleases = true }
 
 [build-system]
-requires = ['poetry>=0.12']
-build-backend = 'poetry.masonry.api'
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

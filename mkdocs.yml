@@ -12,7 +12,7 @@ repo_url: https://github.com/aioli-framework/aioli
 edit_uri: ""
 
 nav:
-    - Test: 'index.md'
+    - General: 'index.md'
 
 
 markdown_extensions:

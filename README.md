@@ -1,4 +1,4 @@
-Aioli: Non-blocking HTTP API Framework
+Aioli: Non-blocking HTTP API Framework and Toolkit
 === 
 
 [![image](https://img.shields.io/github/license/rbw/aioli.svg?style=flat-square)](https://raw.githubusercontent.com/rbw/aioli/master/LICENSE)
