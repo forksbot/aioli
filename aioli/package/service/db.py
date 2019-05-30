@@ -55,7 +55,7 @@ class DatabaseService:
     def _model_has_attrs(self, *attrs):
         for attr in attrs:
             if attr not in self.model.fields:
-                raise AioliException(400, f'Unknown field {attr}')
+                raise AioliException(400, f"Unknown field {attr}")
 
         return True
 
@@ -63,15 +63,15 @@ class DatabaseService:
         if not value:
             return None
 
-        for colname in value.split(','):
+        for colname in value.split(","):
             sort_asc = True
-            if colname.startswith('-'):
+            if colname.startswith("-"):
                 colname = colname[1:]
                 sort_asc = False
 
             if self._model_has_attrs(colname):
                 # @TODO - add support for ordering by related fields
-                tbl_colname = text(f'{self.model.__tablename__}.{colname}')
+                tbl_colname = text(f"{self.model.__tablename__}.{colname}")
                 yield asc(tbl_colname) if sort_asc else desc(tbl_colname)
 
     def _parse_query(self, **kwargs):
@@ -104,7 +104,7 @@ class DatabaseService:
             except KeyError:
                 raise AioliException(
                     message=f"Invalid operator: {op}, available: {[e.name for e in FilterOperator]}",
-                    status=400
+                    status=400,
                 )
 
             if isinstance(value, Model):
@@ -127,7 +127,7 @@ class DatabaseService:
         stmt = self.objects_joined.build_select_expression().limit(limit).offset(offset)
 
         if query:
-            clauses = dict([clause.split('=') for clause in query.split(',')])
+            clauses = dict([clause.split("=") for clause in query.split(",")])
             stmt = stmt.where(self._parse_query(**clauses))
 
         if sort:

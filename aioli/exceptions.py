@@ -9,20 +9,22 @@ class InternalError(HTTPException):
 
 
 class AioliException(HTTPException):
-    def __init__(self, status=500, message='Internal Server Error'):
+    def __init__(self, status=500, message="Internal Server Error"):
         super(AioliException, self).__init__(status_code=status, detail=message)
 
 
 class InvalidChannelError(HTTPException):
     def __init__(self):
-        super(InvalidChannelError, self).__init__(status_code=400, detail='Invalid channel provided')
+        super(InvalidChannelError, self).__init__(
+            status_code=400, detail="Invalid channel provided"
+        )
 
 
 class DatabaseError(HTTPException):
     def __init__(self):
-        super(DatabaseError, self).__init__(status_code=500, detail='Database error')
+        super(DatabaseError, self).__init__(status_code=500, detail="Database error")
 
 
 class NoMatchFound(HTTPException):
-    def __init__(self, message='Not Found'):
+    def __init__(self, message="Not Found"):
         super(NoMatchFound, self).__init__(status_code=404, detail=message)

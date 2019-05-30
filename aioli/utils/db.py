@@ -7,9 +7,9 @@ def qs_to_sa(value):
     if not value:
         return
 
-    for col_name in value.split(','):
+    for col_name in value.split(","):
         sort_asc = True
-        if col_name.startswith('-'):
+        if col_name.startswith("-"):
             col_name = col_name[1:]
             sort_asc = False
 

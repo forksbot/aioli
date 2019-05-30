@@ -62,7 +62,7 @@ def takes(props=None, **schemas):
         @wraps(fn)
         async def handler(*args, **kwargs):
             args_new = list(args)
-            request = kwargs['request'] if 'request' in kwargs else args_new.pop(1)
+            request = kwargs["request"] if "request" in kwargs else args_new.pop(1)
 
             for prop in props:
                 value = RequestProp(prop).value
@@ -70,23 +70,23 @@ def takes(props=None, **schemas):
 
                 target = request
 
-                for member in value.split('.'):
+                for member in value.split("."):
                     target = getattr(target, member)
 
                 kwargs.update({RequestProp(prop).name: target})
 
-            if 'headers' in schemas:
-                kwargs.update({'headers': schemas['headers'].load(request.headers)})
+            if "headers" in schemas:
+                kwargs.update({"headers": schemas["headers"].load(request.headers)})
 
-            if 'path' in schemas:
-                kwargs.update(schemas['path'].load(request.path_params))
+            if "path" in schemas:
+                kwargs.update(schemas["path"].load(request.path_params))
 
-            if 'body' in schemas:
+            if "body" in schemas:
                 payload = await request.json()
-                kwargs.update({'body': schemas['body'].load(payload)})
+                kwargs.update({"body": schemas["body"].load(payload)})
 
-            if 'query' in schemas:
-                kwargs.update({'query': schemas['query'].load(request.query_params)})
+            if "query" in schemas:
+                kwargs.update({"query": schemas["query"].load(request.query_params)})
 
             return await fn(*args_new, **kwargs)
 
@@ -121,19 +121,23 @@ def returns(schema_cls=None, status=200, many=False):
                 args_new.pop(1)
 
             rv = await fn(*args_new, **kwargs)
-            data = schema.dumps(rv, indent=4, ensure_ascii=False).encode('utf8') if schema else None
+            data = (
+                schema.dumps(rv, indent=4, ensure_ascii=False).encode("utf8")
+                if schema
+                else None
+            )
 
             # Return HTTP encoded JSON response
             return Response(
                 content=data,
                 status_code=status,
-                headers={'content-type': 'application/json'}
+                headers={"content-type": "application/json"},
             )
 
         stack = RouteRegistry.get_stack(handler)
 
         # Add the `response` schema to this route handler's stack
-        stack.schemas.update({'response': schema})
+        stack.schemas.update({"response": schema})
 
         return handler
 
