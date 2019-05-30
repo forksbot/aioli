@@ -26,16 +26,17 @@ Limitations
 - Event loop driven; code must be [asynchronous](https://docs.python.org/3/library/asyncio.html)
 
 
-Package Index
---
-
-The [https://pkgs.aioli.dev](https://pkgs.aioli.dev) website shows useful info about verified packages; Trust status,
-install instructions, author and license data, as well as links to source code and more.
-
 Documentation
 ---
 
 The documentation is available at [https://docs.aioli.dev](https://docs.aioli.dev). 
+
+
+Package Index
+--
+
+Shortly, the [https://pkgs.aioli.dev](https://pkgs.aioli.dev) will show useful info about verified packages; Trust status,
+install instructions, author and license data, as well as links to source code and more.
 
 
 Examples
