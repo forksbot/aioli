@@ -190,4 +190,4 @@ class Manager:
         await self._register_services()
 
         # app.log.info(f'Worker {getpid()} ready for action')
-        self.log.info("Components loaded")
+        self.log.info("All packages loaded")
