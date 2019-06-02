@@ -7,16 +7,15 @@ import inspect
 import sqlalchemy
 from aiohttp import ClientSession
 
-from aioli.exceptions import InternalError
-from aioli.db import DatabaseManager
-from aioli.utils.http import format_path
-from aioli.package.controller import BaseHttpController, BaseWebSocketController
-
+from .exceptions import InternalError
+from .db import DatabaseManager
+from .utils.http import format_path
+from .controller import BaseHttpController, BaseWebSocketController
 from .package import Package
 
 
-class Manager:
-    """Takes care of registering packages, implements the Singleton pattern"""
+class PackageManager:
+    """Takes care of package deployment"""
 
     __instance = None
 
@@ -25,11 +24,11 @@ class Manager:
     db = DatabaseManager
     loop = asyncio.get_event_loop()
     http_client: ClientSession
-    log = logging.getLogger("aioli.manager")
+    log = logging.getLogger("aioli.pkg")
 
     def __new__(cls, *args, **kwargs):
         if not cls.__instance:
-            cls.__instance = super(Manager, cls).__new__(cls, *args, **kwargs)
+            cls.__instance = super(PackageManager, cls).__new__(cls, *args, **kwargs)
 
         return cls.__instance
 
@@ -64,7 +63,7 @@ class Manager:
             if assigned_path:
                 export.path = assigned_path
 
-            export.version = getattr(module, "__version__", "0.0.0")
+            export.log = self.log.getChild(export.name)
 
             self.log.info(f"Attaching {export.name}/{export.version}")
             self.pkgs.append((export.name, export))
@@ -98,7 +97,7 @@ class Manager:
 
         for pkg, model in models:
             model.__database__ = self.db.database
-            pkg.log.debug(
+            pkg.log.info(
                 f"Registering model: {model.__name__} [{model.__table__.name}]"
             )
 
@@ -113,8 +112,9 @@ class Manager:
             handler_addr = hex(id(handler))
             handler_name = f"{pkg.name}.{route.name}"
 
-            path_full = format_path(self.app.config["API_BASE"], pkg.path, route.path)
-            pkg.log.debug(
+            path_full = format_path(self.app.config["api_base"], pkg.path, route.path)
+
+            pkg.log.info(
                 f"Registering route: {path_full} [{route.method}] => "
                 f"{route.name} [{handler_addr}]"
             )
@@ -133,9 +133,9 @@ class Manager:
 
         ctrlcls.register(pkg)
 
-        path_full = format_path(self.app.config["API_BASE"], pkg.path, ctrlcls.path)
+        path_full = format_path(self.app.config["api_base"], pkg.path, ctrlcls.path)
 
-        pkg.log.debug(f"Registering WebSocket route: {path_full}")
+        pkg.log.info(f"Registering WebSocket route: {path_full}")
 
         self.app.add_websocket_route(path_full, ctrlcls, "test")
 
@@ -182,8 +182,8 @@ class Manager:
         # self.loop = loop
 
         # self.http_client = ClientSession(loop=loop)
-        if app.config["DB_URL"]:
-            self.db = await DatabaseManager.init(app.config["DB_URL"])
+        if app.config["db_url"]:
+            self.db = await DatabaseManager.init(app.config["db_url"])
             await self._register_models()
 
         await self._register_controllers()
