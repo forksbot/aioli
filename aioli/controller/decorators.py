@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-Route decorators are executed in the reversed order.
-output_dump -> input_load -> route
-"""
-
 from functools import wraps
 
 from starlette.requests import Request
