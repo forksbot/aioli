@@ -5,7 +5,7 @@ Creating an HTTP API interface – be it RESTful or otherwise – is done using 
 :class:`~aioli.controller.BaseHttpController` class.
 
 
-**API**
+*API*
 
 .. automodule:: aioli.controller
 .. autoclass:: BaseHttpController
@@ -38,7 +38,7 @@ Routing
 
 Route handlers are standard Python methods decorated with the `@route`.
 
-**API**
+*API*
 
 .. automodule:: aioli.controller.decorators
    :members: route
@@ -55,17 +55,12 @@ Route handlers are standard Python methods decorated with the `@route`.
     class Controller(BaseController):
         def __init__(self):
             self.visit = VisitService()
-            self.log.debug("Guestbook opening")
-
-        async def on_ready(self):
-            self.log.debug(f"Guestbook opened at {self.pkg.path}")
-
-        async def on_request(self, request):
-            self.log.debug(f"Request received: {request}")
 
         @route("/", Method.GET, "List of entries")
         async def visits_get(self, request):
-            # Just pass along the query params
+            # Just pass along the query params as-is.
+            #
+            # Serialize and return whatever get_many() returns.
             return await self.visit.get_many(**request.query_params)
 
 
@@ -76,13 +71,15 @@ Transformation is implemented on route handlers using `@takes` and `@returns`. T
 a simple yet powerful way of shaping and validating request data, while also making sure API endpoints
 only returns expected data.
 
+This makes the API more secure and consistent.
 
 Takes
 ~~~~~
 
-The `@takes` decorator accepts
+The `@takes` decorator is used to instruct Aioli how to deserialize and validate parts of a request,
+and injects the resulting dictionaries as arguments to the decorated function.
 
-**API**
+*API*
 
 .. automodule:: aioli.controller.decorators
    :members: takes
@@ -102,26 +99,24 @@ The `@takes` decorator accepts
     class Controller(BaseController):
         def __init__(self):
             self.visit = VisitService()
-            self.log.debug("Guestbook opening")
-
-        async def on_ready(self):
-            self.log.debug(f"Guestbook opened at {self.pkg.path}")
-
-        async def on_request(self, request):
-            self.log.debug(f"Request received: {request}")
 
         @route("/", Method.GET, "List of entries")
         @takes(query=ParamsSchema)
         async def visits_get(self, query):
-            return await self.visit.get_many(**query)
-
+            # Transform and validate query params against ParamsSchema,
+            # then pass it along to get_many().
+            #
+            # Serialize and return whatever get_many() returns.
+            return serialize(await self.visit.get_many(**query))
 
 
 
 Returns
 ~~~~~~~
 
-**API**
+The `@returns` decorator takes care of serializing the data returned by the route handler.
+
+*API*
 
 .. automodule:: aioli.controller.decorators
    :members: returns
@@ -142,17 +137,14 @@ Returns
     class Controller(BaseController):
         def __init__(self):
             self.visit = VisitService()
-            self.log.debug("Guestbook opening")
-
-        async def on_ready(self):
-            self.log.debug(f"Guestbook opened at {self.pkg.path}")
-
-        async def on_request(self, request):
-            self.log.debug(f"Request received: {request}")
 
         @route("/", Method.GET, "List of entries")
         @takes(query=ParamsSchema)
         @returns(Visit, many=True)
         async def visits_get(self, query):
+            # Transform and validate query params against ParamsSchema,
+            # then pass it along to get_many().
+            #
+            # Transform and dump the object returned from get_many() -
+            # according to the Visit schema, as a JSON encoded response
             return await self.visit.get_many(**query)
-

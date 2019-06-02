@@ -7,7 +7,7 @@ Routing
 Routing is implemented using one or more *handlers* decorated with a `@route`.
 Used without the `@input_load` decorator, the entire request object is passed to the handler.
 
-**API**
+*API*
 
 .. automodule:: aioli.controller.decorators
    :members: route
@@ -35,7 +35,7 @@ Request and response transformation is performed when a request reaches `@input_
 and upon handler return in `@output_dump`. These two decorators provides a declarative way of defining
 what comes in and what goes out of a route handler.
 
-**API**
+*API*
 
 .. automodule:: aioli.controller.decorators
    :members: input_load, output_dump
