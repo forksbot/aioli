@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
 
 import re
-from logging import getLogger
 
 NAME_REGEX = re.compile(r"^[a-zA-Z0-9-]*$")
 PATH_REGEX = re.compile(r"^/[a-zA-Z0-9-]*$")
+
+# Semantic version regex
+# 1 - Major
+# 2 - Minor
+# 3 - Patch
+# 4 (optional) - Pre-release version info
+# 5 (optional) - Metadata (build time, number, etc.)
+
+VERSION_REGEX = re.compile(
+    r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[a-zA-Z\d][-a-zA-Z.\d]*)?(\+[a-zA-Z\d][-a-zA-Z.\d]*)?$"
+)
 
 
 class Package:
@@ -12,35 +22,47 @@ class Package:
 
     :param name: Package name
     :param description: Package description
+    :param version: Package semver version
     :param controllers: List of Controller classes
     :param services: List of Service classes
     :param models: List of Model classes
     """
 
-    _path = None
     _name = None
+    _version = None
 
     def __init__(
         self,
         name,
         description,
+        version,
         controllers=None,
         services=None,
         models=None,
-        dependencies=None,
     ):
         assert isinstance(controllers, list) or None
         assert isinstance(services, list) or None
 
         self.name = name
+        self.description = description
+        self.version = version
 
         self.controllers = controllers or []
         self.services = services or []
         self.models = models or []
-        self.dependencies = dependencies or []
 
-        self.log = getLogger(f"aioli.pkg.{self.name}")
-        self.description = description
+    @property
+    def version(self):
+        return self._version
+
+    @version.setter
+    def version(self, value):
+        if not VERSION_REGEX.match(value):
+            raise Exception(
+                f"Package {self.name} version is not a valid semver version string"
+            )
+
+        self._version = value
 
     @property
     def name(self):
@@ -54,21 +76,3 @@ class Package:
             )
 
         self._name = value
-
-    @property
-    def path(self):
-        """Package path accessor"""
-
-        return self._path
-
-    @path.setter
-    def path(self, value):
-        if not PATH_REGEX.match(value):
-            raise Exception(
-                f"Package {self.name} path must be a valid path, example: /my-package-1"
-            )
-
-        self._path = value
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} [{self.name}] at {hex(id(self))}>"

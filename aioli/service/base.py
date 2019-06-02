@@ -3,7 +3,7 @@
 from uvloop.loop import Loop
 
 from aioli import Application
-from .._component import Component
+from aioli.component import Component
 
 from .db import DatabaseService, DatabaseManager
 

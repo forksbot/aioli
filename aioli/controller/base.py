@@ -3,8 +3,7 @@
 from starlette.endpoints import WebSocketEndpoint
 
 from aioli.registry import RouteRegistry
-
-from .._component import Component
+from aioli.component import Component
 
 
 class ControllerComponent(Component):

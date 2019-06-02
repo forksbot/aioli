@@ -6,8 +6,7 @@ import orm
 
 from sqlalchemy import select, func, desc, asc, text, sql
 
-from aioli.db import Model
-from aioli.manager import DatabaseManager
+from aioli.db import Model, DatabaseManager
 from aioli.exceptions import AioliException, NoMatchFound
 
 
