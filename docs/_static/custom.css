@@ -1,0 +1,13 @@
+body {
+    overflow-y: scroll !important;
+    right: -17px;
+}
+
+.sphinxsidebarwrapper > h3 {
+    display: none;
+}
+
+.caption {
+    font-weight: bold;
+}
+

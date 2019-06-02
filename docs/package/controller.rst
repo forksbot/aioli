@@ -1,29 +1,3 @@
-Controller
-==========
-
-The `Controller` class inherits from :class:`~aioli.controller.BaseController` and is registered
-with a :class:`~aioli.Package`.
-
-**API**
-
-.. automodule:: aioli.controller
-.. autoclass:: BaseController
-   :members: stacks, on_ready, on_request
-
-
-**Example**
-
-.. code-block:: python
-
-    from aioli.controller import BaseController
-
-    class Controller(BaseController):
-        async def on_ready(self):
-            self.log.debug(f'Controller ready at path: {self.pkg.path}')
-
-        async def on_request(self, request):
-            self.log.debug(f'Request received: {request}')
-
 
 
 
