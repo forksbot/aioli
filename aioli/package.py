@@ -131,7 +131,7 @@ class Package:
             return
 
         if not PATH_REGEX.match(value):
-            raise Exception(f"Package {self.name} version is not a valid SemVer string")
+            raise Exception(f"Invalid Path provided to Package {self.name}")
 
         self.__path = value
 
