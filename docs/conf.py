@@ -35,6 +35,8 @@ pygments_style = "sphinx"
 
 html_static_path = ["_static"]
 
+html_logo = "_static/logo.png"
+
 html_context = {
     "maintainer": "Robert Wikman <rbw@vault13.org>",
     "project_pretty_name": "Aioli Framework",
@@ -43,16 +45,15 @@ html_context = {
 html_theme = "alabaster"
 html_sidebars = {
     "**": [
-        "about.html",
-        "navigation.html",
+        "about.html", "navigation.html",
     ]
 }
 html_theme_options = {
-    "sidebar_width": "200px",
+    "sidebar_width": "190px",
     "sidebar_collapse": True,
     "fixed_sidebar": True,
     "font_family": "arial",
-    "description": "Non-blocking HTTP API Framework and Toolkit",
+    "description": "Non-blocking Web API Framework and Toolkit",
     "github_repo": "aioli-framework/aioli",
     "github_banner": True,
 }

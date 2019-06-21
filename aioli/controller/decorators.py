@@ -5,10 +5,10 @@ from functools import wraps
 from starlette.requests import Request
 from starlette.responses import Response
 
-from aioli.registry import RouteRegistry
 from aioli.exceptions import AioliException
 
 from .consts import Method, RequestProp
+from .registry import RouteRegistry
 
 
 def route(path, method, description=None):

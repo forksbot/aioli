@@ -1,17 +1,30 @@
 # -*- coding: utf-8 -*-
 
 
+class ComponentMeta(type):
+    _instances = {}
+
+    def __call__(cls, pkg, *args, reuse_existing=True, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(ComponentMeta, cls).__call__(pkg, *args, **kwargs)
+
+        return cls._instances[cls]
+
+
 class Component:
+    conf = None
     pkg = None
     log = None
 
-    @classmethod
-    def _pkg_bind(cls, pkg):
-        cls.pkg = pkg
-        cls.log = pkg.log
+    def __init__(self, pkg):
+        self.pkg = pkg
+        self.app = pkg.app
+        self.registry = self.app.registry
+        self.log = pkg.log
+        self.conf = pkg.conf
 
-    async def on_ready(self):
-        """Called upon initialization"""
+    async def on_startup(self):
+        """Called after the Package has been successfully attached to the Application"""
 
-    def __repr__(self):
-        return f"<{self.__class__.__name__} at {hex(id(self))}>"
+    async def on_shutdown(self):
+        """Called when the Application is shutting down gracefully"""

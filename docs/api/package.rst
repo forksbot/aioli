@@ -1,29 +1,38 @@
+.. _package-docs:
+
 Package
 =======
 
 
-The :class:`~aioli.Package` class is used for defining a Package and making its components eligible for use.
+A *Package* is a namespaced and labelled group of components that can be imported into an :class:`~aioli.Application`.
+
+There are two main components for building Web API Packages: :ref:`controller-docs` & :ref:`service-docs`
+
+When developing an Aioli application, local *Packages* typically contain code that makes sense to modularize in the Application at hand.
 
 
 .. automodule:: aioli
 .. autoclass:: Package
    :members:
 
-*Example*
+Example – Creating a Package with Controller and Service layers
 
 .. code-block:: python
 
     from aioli import Package
-    from aioli_guestbook import service
+
     from .service import VisitService, VisitorService
-    from .database import VisitModel, VisitorModel
-    from .controller import GuestbookHttpController
+    from .controller import HttpController
+    from .config import ConfigSchema
+
 
     export = Package(
-        controllers=[GuestbookHttpController],
-        services=[VisitService, VisitorService],
-        models=[VisitModel, VisitorModel],
-        name="aioli-guestbook",
+        name="aioli_guestbook",
         version="0.1.0",
-        description="Example guestbook package"
+        description="Example guestbook Package",
+        controllers=[HttpController],
+        services=[VisitService, VisitorService],
+        config=ConfigSchema,
     )
+
+

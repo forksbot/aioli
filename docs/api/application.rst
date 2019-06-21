@@ -6,22 +6,28 @@ Its constructor expects a *list* of at least one :class:`~aioli.Package` to be r
 
 
 .. automodule:: aioli
+   :noindex:
 .. autoclass:: Application
+   :inherited-members:
+   :members: add_exception_handler
 
 
-*Example*
+*Example – Guestbook Web API making use of the aioli_rdbms extension*
 
 .. code-block:: python
 
     import aioli_guestbook
+    import aioli_rdbms
+
+    import toml
 
     from aioli import Application
 
-
     app = Application(
-        **toml.loads(["config.toml"]),
-        debug=False,
+        config=toml.load("config.toml"),
         packages=[
-            ("/guestbook", aioli_guestbook),
+            aioli_guestbook,
+            aioli_rdbms,
         ]
     )
+

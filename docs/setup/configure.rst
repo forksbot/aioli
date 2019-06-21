@@ -1,60 +1,116 @@
+.. _setup-configure-docs:
+
 Configure
 =========
 
-Configuration can be done by either using environment variables, or a dictionary provided to the Aioli Application.
+The *Application* and associated *Packages* can be configured using either environment variables,
+or by a dictionary provided to the *config* parameter when creating the :class:`~aioli.Application`.
+
+
+.. note::
+
+    Note!
+
+    :ref:`environment-config` takes precedence over :ref:`Application Constructor <constructor-config>` config.
 
 
 
 Mappings
-~~~~~~~~
+^^^^^^^^
 
-===================   =======================  ===========
-Constructor           Environment              DEFAULT
-===================   =======================  ===========
-listen_host           AIOLI_LISTEN_HOST        127.0.0.1
-listen_port           AIOLI_LISTEN_PORT        5000
-debug                 AIOLI_DEBUG              False
-workers               AIOLI_WORKERS            [cores] * 2
-api_base              AIOLI_API_BASE           /api
-db_url                AIOLI_DB_URL             None
-concurrency           AIOLI_MAX_CONCURRENCY    None
-limit_requests        AIOLI_MAX_REQUESTS       None
-timeout_keepalive     AIOLI_TIMEOUT_KEEPALIVE  None
-===================   =======================  ===========
+Environment and Dictionary configs uses different naming conventions, for obvious reasons, but
+follows the same logic.
 
 
-Environment
+Application
 ~~~~~~~~~~~
 
-Configuring Aioli using environment variables can be useful in containerized environments.
+Mappings used for configuring core parts of an Aioli Application.
+
+*Locations*
+
+- Dictionary key: "aioli_core"
+- Environment prefix: "AIOLI_CORE"
+- Run-time access: :py:attr:`aioli.Application.config`
+
+*Mappings*
+
+.. table::
+   :align: left
+
+   ===================   =======================  ===========
+   Dictionary            Environment              DEFAULT
+   ===================   =======================  ===========
+   dev_host              AIOLI_CORE_DEV_HOST      127.0.0.1
+   dev_port              AIOLI_CORE_DEV_PORT      5000
+   api_base              AIOLI_CORE_API_BASE      /api
+   debug                 AIOLI_CORE_DEBUG         False
+   ===================   =======================  ===========
+
+Package
+~~~~~~~
+
+A custom *Package* configuration schema can be defined using the :class:`~aioli.config.PackageConfigSchema` class,
+which comes with a set of common parameters, listed below.
+
+*Locations*
+
+- Dictionary key: [package_name]
+- Environment prefix: [PACKAGE_NAME]
+- Run-time access: :py:attr:`aioli.Package.config`
+
+*Mappings*
+
+.. table::
+   :align: left
+
+   ===================   ===================================  ===========
+   Dictionary            Environment                          DEFAULT
+   ===================   ===================================  ===========
+   debug                 [PACKAGE_NAME]_DEBUG                 None
+   controllers_enable    [PACKAGE_NAME]_CONTROLLERS_ENABLE    True
+   services_enable       [PACKAGE_NAME]_SERVICES_ENABLE       True
+   ===================   ===================================  ===========
+
+
+Check out the :ref:`Package Config Schema docs <package-config-docs>` for info on how to extend the base schema
+with custom parameters.
+
+
+.. _environment-config:
+
+Environment
+^^^^^^^^^^^
+
+Configuring Aioli using *Environment Variables* can be useful in some environments.
+
+**Example**
 
 .. code-block:: shell
 
-   $ export AIOLI_LISTEN_HOST="0.0.0.0"
-   $ export AIOLI_LISTEN_PORT="5555"
+   $ export AIOLI_CORE_DEV_HOST="0.0.0.0"
+   $ export AIOLI_CORE_DEV_PORT="5555"
+   $ export AIOLI_RDBMS_TYPE="mysql"
+   $ export AIOLI_RDBMS_HOST="127.0.0.1"
+   $ export AIOLI_RDBMS_DATABASE="aioli"
+   $ export AIOLI_RDBMS_USERNAME="aioli"
+   $ export AIOLI_RDBMS_PASSWORD="super_secret"
+   $ export AIOLI_GUESTBOOK_VISITS_MAX="10"
 
 
-.. _app-constructor-label:
+.. _constructor-config:
 
 Constructor
-~~~~~~~~~~~
+^^^^^^^^^^^
 
-The configuration can be provided as keyword arguments directly to the :class:`aioli.Application` constructor.
+The configuration can be provided as a dictionary to the *config* parameter when creating the :class:`~aioli.Application`.
 
-.. code-block:: python
-
-   import aioli
-
-   app = aioli.Application(
-       **toml.loads(["config.toml"]),
-       debug=False,
-       packages=[...]
-       ...
-   )
-
+Check out the :ref:`package-config-schema-example` for an example.
 
 Access
-~~~~~~
+^^^^^^
 
-The configuration is available as a Dictionary in :attr:`Controller.config` and :attr:`Service.config`.
+Both :class:`~aioli.Application` and :class:`~aioli.Package` configurations can be easily accessed from :ref:`service-docs` and :ref:`controller-docs` instances,
+using the `config` property.
+
 

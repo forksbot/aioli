@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "aioli"
 version = "0.3.0"
-description = "Non-blocking HTTP API Framework and Toolkit"
+description = "Non-blocking Web API Framework and Toolkit"
 authors = ["Robert Wikman <rbw@vault13.org>"]
 license = "BSD-2-Clause"
 
@@ -9,23 +9,15 @@ license = "BSD-2-Clause"
 python = "^3.6"
 typesystem = { git = "https://github.com/rbw/typesystem.git", branch = "time-serialization" }
 starlette = "^0.12.0b3"
-orm = "~=0.1"
-databases = "^0.2.1"
-asyncpg = "^0.18.3"
-psycopg2-binary = "^2.8.1"
-aiomysql = "^0.0.20"
-mysqlclient = "^1.4.2"
-aiohttp = "^3.5.4"
 uvloop = "^0.12.1"
 uvicorn = "^0.6.1"
 gunicorn = "^19.9.0"
-requests_async = "^0.2.0"
 marshmallow = "^3.0.0rc3"
 ujson = "^1.35"
-toml = "^0.10.0"
 
 [tool.poetry.dev-dependencies]
 twine = "^1.13"
+sphinx = "^2.1.1"
 pytest = "^4.4.0"
 pytest-cov = "^2.7.1"
 autoflake = "^1.3"

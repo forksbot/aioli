@@ -1,6 +1,9 @@
 body {
     overflow-y: scroll !important;
-    right: -17px;
+}
+
+div.body {
+    max-width: 1024px !important;
 }
 
 .sphinxsidebarwrapper > h3 {
@@ -8,6 +11,23 @@ body {
 }
 
 .caption {
-    font-weight: bold;
+    /*font-style: italic;*/
+}
+
+h1.logo {
+    display: none;
+}
+
+.sphinxsidebarwrapper {
+    font-size: 16px;
+}
+
+.admonition-title {
+    display: none !important;
+}
+
+.note {
+    background-color: #fffeeb !important;
+    padding: 0px 30px !important;
 }
 

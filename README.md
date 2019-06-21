@@ -1,4 +1,4 @@
-Aioli: Non-blocking HTTP API Framework and Toolkit
+Aioli: Non-blocking Web API Framework
 === 
 
 [![image](https://img.shields.io/github/license/rbw/aioli.svg?style=flat-square)](https://raw.githubusercontent.com/rbw/aioli/master/LICENSE)
@@ -7,19 +7,21 @@ Aioli: Non-blocking HTTP API Framework and Toolkit
 [![image](https://img.shields.io/codecov/c/github/rbw/aioli.svg?style=flat-square)](https://codecov.io/gh/rbw/aioli)
 [![image](https://img.shields.io/pypi/pyversions/aioli.svg?style=flat-square)](https://pypi.org/project/aioli/)
 
-Aioli is a Framework that provides a sensible separation between request/response handling (transformation, validation, etc), application logic and data access layers. 
 
-It's also a Toolkit for building, shipping and running performant and highly composable WebSocket and RESTful HTTP APIs using Python 3 asyncio.
 
+Aioli is a Framework for building RESTful HTTP and WebSocket API packages, with a sensible separation between request/response handling (transformation, validation, etc), application logic and data access layers.
+
+Furthermore, it makes use of [asyncio](https://docs.python.org/3/library/asyncio.html), is lightweight and provides good performance and concurrency.
 
 Features
 ---
 
 - High performance and concurrency, lightweight
 - Horizontally scalable
-- Built-in ORM with support for PostgreSQL and MySQL
+- Simple component system with high composability
 - Intuitive tools for working with request and response data
 - Created with [Docker](https://www.docker.com) and [Kubernetes](https://kubernetes.io) in mind
+- Licensed under MIT
 
 Limitations
 ---
@@ -34,18 +36,12 @@ Documentation
 The documentation is available at [https://docs.aioli.dev](https://docs.aioli.dev). 
 
 
-Package Index
---
-
-Shortly, the [https://pkgs.aioli.dev](https://pkgs.aioli.dev) website will show useful info about verified packages; Trust status,
-install instructions, author and license data, as well as links to source code and more.
-
-
-Examples
+Packages
 ---
 
-- [Aioli Guestbook Example](https://github.com/aioli-framework/aioli-guestbook-example): Comprehensive RESTful HTTP API.
-- [Monsoon](https://github.com/rbw/monsoon): RESTful HTTP API and WebSocket relay for Livestatus.
+Shortly, the https://pkgs.aioli.dev website will show useful info about 1st and verified 3rd-party Packages; trust status, install instructions, author and license data, as well as links to source code and more.
+
+Currently, 1st-party extension-type Packages can be found at [github.com/aioli-framework](https://github.com/aioli-framework).
 
 
 Project status

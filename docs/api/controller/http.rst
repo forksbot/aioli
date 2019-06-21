@@ -1,7 +1,7 @@
-HttpController
-==============
+HTTP
+====
 
-Creating an HTTP API interface – be it RESTful or otherwise – is done using the
+Creating an HTTP Interface – be it RESTful or otherwise – is done using the
 :class:`~aioli.controller.BaseHttpController` class.
 
 
@@ -9,10 +9,10 @@ Creating an HTTP API interface – be it RESTful or otherwise – is done using 
 
 .. automodule:: aioli.controller
 .. autoclass:: BaseHttpController
-   :members: on_ready, on_request
+   :members: on_startup, on_shutdown, on_request
 
 
-*Example*
+*Example – Controller without route handlers*
 
 .. code-block:: python
 
@@ -26,8 +26,8 @@ Creating an HTTP API interface – be it RESTful or otherwise – is done using 
             self.visit = VisitService()
             self.log.debug("Guestbook opening")
 
-        async def on_ready(self):
-            self.log.debug(f"Guestbook opened at {self.pkg.path}")
+        async def on_startup(self):
+            self.log.debug(f"Guestbook opened at {self.package.path}")
 
         async def on_request(self, request):
             self.log.debug(f"Request received: {request}")
@@ -43,7 +43,7 @@ Route handlers are standard Python methods decorated with the `@route`.
 .. automodule:: aioli.controller.decorators
    :members: route
 
-*Example*
+*Example – Route handler without transformation helpers*
 
 .. code-block:: python
 
@@ -63,7 +63,6 @@ Route handlers are standard Python methods decorated with the `@route`.
             # Serialize and return whatever get_many() returns.
             return await self.visit.get_many(**request.query_params)
 
-
 Transformation
 --------------
 
@@ -82,9 +81,10 @@ and injects the resulting dictionaries as arguments to the decorated function.
 *API*
 
 .. automodule:: aioli.controller.decorators
+   :noindex:
    :members: takes
 
-*Example*
+*Example – Route handler making use of @takes*
 
 .. code-block:: python
 
@@ -119,10 +119,11 @@ The `@returns` decorator takes care of serializing the data returned by the rout
 *API*
 
 .. automodule:: aioli.controller.decorators
+   :noindex:
    :members: returns
 
 
-*Example*
+*Example – Route handler making use of @takes and @returns*
 
 .. code-block:: python
 
