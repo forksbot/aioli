@@ -13,7 +13,7 @@ Aioli is a Framework for building RESTful HTTP and WebSocket API packages, with 
 
 Furthermore, it makes use of [asyncio](https://docs.python.org/3/library/asyncio.html), is lightweight and provides good performance and concurrency.
 
-Sounds interesting? Check out the [docs](https://docs.aioli.dev), or the [aioli-framework/aioli-guestbook-example](https://github.com/aioli-framework/aioli-guestbook-example) for a RESTful HTTP API example Package.
+Want to know more? Check out the [docs](https://docs.aioli.dev) or the [aioli-framework/aioli-guestbook-example](https://github.com/aioli-framework/aioli-guestbook-example) for a RESTful HTTP API example Package.
 
 
 Features
