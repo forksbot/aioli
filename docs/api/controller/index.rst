@@ -3,8 +3,8 @@
 Controller
 ==========
 
-The Controller layer takes care of routing & request/response handling (transformation, validation, etc).
-Multiple Controllers of different type may coexisting in a Package's Controller layer.
+The Controller layer takes care of stuff like routing, request and response handling, transformation, validation.
+Multiple Controllers of different type may coexist in a Package's Controller layer.
 
 
 .. toctree::

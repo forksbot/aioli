@@ -87,6 +87,6 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, "aioli", "aioli Documentation",
-     author, "aioli", "One line description of project.",
+     author, "aioli", "Aioli Web API Framework",
      "Miscellaneous"),
 ]

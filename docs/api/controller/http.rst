@@ -76,7 +76,7 @@ Takes
 ~~~~~
 
 The `@takes` decorator is used to instruct Aioli how to deserialize and validate parts of a request,
-and injects the resulting dictionaries as arguments to the decorated function.
+and injects the resulting dictionaries as arguments into the decorated function.
 
 *API*
 

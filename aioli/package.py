@@ -35,9 +35,6 @@ class Package:
     :ivar app: Application instance
     :ivar log: Package logger
     :ivar state: Package state
-    :ivar path: Package Path
-    :ivar name: Package Name
-    :ivar version: Package Version
     :ivar config: Package config
     :ivar controllers: List of Controllers registered with the Package
     :ivar services: List of Services registered with the Package

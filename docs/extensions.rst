@@ -1,6 +1,8 @@
 About
 =====
 
+To make use of a third-party Aioli Package, the Package itself and its dependencies needs to be explicitly registered with the Application.
+
 The typical Aioli extension-type *Package* manages one or more :ref:`service-docs` objects, provides an API of its own, and may contain :ref:`controller-docs` code as well.
 
 
