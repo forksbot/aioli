@@ -70,39 +70,40 @@ Create the configuration using the format of choice.
        path = "/api"
        debug = true
 
+       [aioli_guestbook]
+       path = "/guestbook"
+       # Maximum number of visits per IP
+       visits_max = 14
+
        [aioli_rdbms]
-       type = "mysql"
+       type = "(mysql|postgres)"
+       username = "user"
+       password = "pass"
        host = "127.0.0.1"
        port = 3306
        database = "aioli"
-       username = "aioli01"
-       password = "super_secret"
 
-       [aioli_guestbook]
-       visits_max = 10
+Register
+^^^^^^^^
 
-
-Load
-^^^^
-
-Parse the file and pass it as a Dictionary to the :class:`~aioli.Application` constructor.
+Parse the configuration file and pass it as a Dictionary to the :class:`~aioli.Application` constructor.
 
 *File: my_application/main.py*
 
     .. code-block:: python
 
-       import toml
-       import aioli
-
-       import aioli_rdbms
        import aioli_guestbook
+       import aioli_rdbms
 
-       app = aioli.Application(
-           config=toml.loads(["/path/to/config.toml"]),
+       import toml
+
+       from aioli import Application
+
+       app = Application(
+           config=toml.load("config.toml"),
            packages=[
-               (None, aioli.rdbms),
-               ("/guestbook", aioli_guestbook)
+               aioli_guestbook,
+               aioli_rdbms,
            ]
        )
-
 
