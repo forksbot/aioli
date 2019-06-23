@@ -13,7 +13,7 @@ Aioli is a Framework for building RESTful HTTP and WebSocket API *Packages*.
 Its component system provides a sensible separation of request/response handling, 
 application logic and data access layers, and was built with emphasis on portability and composability.
 
-Furthermore, Aioli makes use of asyncio, is lightweight and provides very good performance -- especially for IO bound workloads.
+Furthermore, it makes use of asyncio, is lightweight and provides high performance and concurrency -- especially for IO-bound workloads.
 
 
 Features
