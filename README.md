@@ -10,8 +10,8 @@ Aioli: Non-blocking Web API Framework
 
 
 Aioli is a Framework for building RESTful HTTP and WebSocket API *Packages*.
-Its component system provides a sensible separation of request/response handling, 
-application logic and data access layers, and was built with emphasis on portability and composability.
+Its component system provides a sensible separation of application logic, data access and request/response layers,
+and was built with emphasis on portability and composability.
 
 Furthermore, it makes use of asyncio, is lightweight and provides high performance and concurrency -- especially for IO-bound workloads.
 
@@ -20,9 +20,9 @@ Features
 ---
 
 - High performance and concurrency, lightweight
-- Horizontally scalable
 - Easy to use component system with high composability
-- Intuitive tools for working with request and response data
+- Intuitive tools for working with HTTP requests
+- Horizontally scalable
 - Created with [Docker](https://www.docker.com) and [Kubernetes](https://kubernetes.io) in mind
 - Licensed under MIT
 
