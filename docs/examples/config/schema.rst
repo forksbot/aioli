@@ -63,25 +63,25 @@ Create the configuration using the format of choice.
 
 *File: config.toml*
 
-    .. code-block:: toml
+.. code-block:: toml
 
-       [aioli_core]
-       dev_port = 5555
-       path = "/api"
-       debug = true
+   [aioli_core]
+   dev_port = 5555
+   path = "/api"
+   debug = true
 
-       [aioli_guestbook]
-       path = "/guestbook"
-       # Maximum number of visits per IP
-       visits_max = 14
+   [aioli_guestbook]
+   path = "/guestbook"
+   # Maximum number of visits per IP
+   visits_max = 14
 
-       [aioli_rdbms]
-       type = "(mysql|postgres)"
-       username = "user"
-       password = "pass"
-       host = "127.0.0.1"
-       port = 3306
-       database = "aioli"
+   [aioli_rdbms]
+   type = "(mysql|postgres)"
+   username = "user"
+   password = "pass"
+   host = "127.0.0.1"
+   port = 3306
+   database = "aioli"
 
 Register
 ^^^^^^^^
@@ -90,20 +90,20 @@ Parse the configuration file and pass it as a Dictionary to the :class:`~aioli.A
 
 *File: my_application/main.py*
 
-    .. code-block:: python
+.. code-block:: python
 
-       import aioli_guestbook
-       import aioli_rdbms
+   import aioli_guestbook
+   import aioli_rdbms
 
-       import toml
+   import toml
 
-       from aioli import Application
+   from aioli import Application
 
-       app = Application(
-           config=toml.load("config.toml"),
-           packages=[
-               aioli_guestbook,
-               aioli_rdbms,
-           ]
-       )
+   app = Application(
+       config=toml.load("config.toml"),
+       packages=[
+           aioli_guestbook,
+           aioli_rdbms,
+       ]
+   )
 

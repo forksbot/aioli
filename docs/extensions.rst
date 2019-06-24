@@ -1,27 +1,27 @@
-About
-=====
+Info
+====
 
-To make use of a third-party Aioli Package, the Package itself and its dependencies needs to be explicitly registered with the Application.
+Extensions in Aioli are used for supporting Packages with extra functionality, typically for interacting with remote systems.
 
-The typical Aioli extension-type *Package* manages one or more :ref:`service-docs` objects, provides an API of its own, and may contain :ref:`controller-docs` code as well.
+To make use of an Extension, the Package itself and its dependencies needs to be registered with the Application.
 
 
 Create
 ======
 
-Extensions make use of the :class:`~aioli.service.BaseService` class and
-usually implements the `Factory pattern <https://en.wikipedia.org/wiki/Factory_method_pattern>`_
-teamed by the :meth:`~aioli.service.BaseService.integrate` method.
+An Extension usually provides an interface with one or more Services. These Services are created using the
+:class:`~aioli.service.BaseService` class and often implements the `Factory pattern <https://en.wikipedia.org/wiki/Factory_method_pattern>`_.
 
 Check out the `aioli-rdbms extension <https://github.com/aioli-framework/aioli-rdbms>`_ for an example.
 
 
-Use
-===
+Register
+========
 
 
-Extensions are registered with the :class:`~aioli.Application`, just like a regular :class:`~aioli.Package`–
-and usually have their Services incorporated into other *Packages*.
+An Extension–just like a regular :class:`~aioli.Package`–is registered with the :class:`~aioli.Application`, and
+have its Service(s) incorporated into other *Packages* using :meth:`~aioli.service.BaseService.integrate`
+or :meth:`~aioli.service.BaseService.connect`.
 
 **Example**
 
@@ -29,17 +29,18 @@ Register the local *users* Package and its dependency, *aioli_rdbms*.
 
 .. code-block:: python
 
-    import aioli_rdbms
+   import aioli_rdbms
 
-    from .packages import users
+   import toml
 
-    app = Application(
-        packages=[
-            ("/users", users),
-            (None, aioli_rdbms),
-            ...
-        ]
-    )
+   from aioli import Application
+
+   import .users
+
+   app = Application(
+       config=toml.load("config.toml"),
+       packages=[users, aioli_rdbms]
+   )
 
 
 
@@ -54,6 +55,8 @@ The *aioli_rdbms.Service* can now be attached to *users.UsersService*:
     from .database import UserModel
 
     class UsersService(BaseService):
+        db = None
+
         async def on_startup(self):
             self.db = (
                 self.integrate(DatabaseService)

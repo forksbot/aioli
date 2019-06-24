@@ -47,11 +47,11 @@ html_sidebars = {
     ]
 }
 html_theme_options = {
-    "sidebar_width": "190px",
+    "sidebar_width": "220px",
     "sidebar_collapse": True,
     "fixed_sidebar": True,
     "logo_name": None,
-    "logo": "logo.png",
+    "logo": "logo_title.png",
     "font_family": "arial",
     "github_repo": "aioli-framework/aioli",
     "github_banner": True,

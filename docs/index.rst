@@ -25,7 +25,7 @@ package.
    api/service
 
 .. toctree::
-   :caption: Extensions
+   :caption: Extend
 
    extensions
 
