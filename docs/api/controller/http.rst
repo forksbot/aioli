@@ -23,18 +23,20 @@ Creating an HTTP Interface – be it RESTful or otherwise – is done using the
 
     class HttpController(BaseHttpController):
         def __init__(self):
-            self.visit = VisitService()
+            super(HttpController, self).__init__(pkg)
+
             self.log.debug("Guestbook opening")
+            self.visit = VisitService(pkg)
 
         async def on_startup(self):
-            self.log.debug(f"Guestbook opened at {self.package.path}")
+            self.log.debug(f"Guestbook opened")
 
         async def on_request(self, request):
             self.log.debug(f"Request received: {request}")
 
 
-Routing
--------
+Route
+-----
 
 Route handlers are standard Python methods decorated with the `@route`.
 
@@ -58,13 +60,13 @@ Route handlers are standard Python methods decorated with the `@route`.
 
         @route("/", Method.GET, "List of entries")
         async def visits_get(self, request):
-            # Just pass along the query params as-is.
-            #
-            # Serialize and return whatever get_many() returns.
-            return await self.visit.get_many(**request.query_params)
+            # Pass along the query params as-is.
+            # Then..
+            # Return whatever get_many() returned.
+            return await self.visit.get_many(**query)
 
-Transformation
---------------
+Transform
+---------
 
 Transformation is implemented on route handlers using `@takes` and `@returns`. These decorators offer
 a simple yet powerful way of shaping and validating request data, while also making sure API endpoints
@@ -103,18 +105,18 @@ and injects the resulting dictionaries as arguments into the decorated function.
         @route("/", Method.GET, "List of entries")
         @takes(query=ParamsSchema)
         async def visits_get(self, query):
-            # Transform and validate query params against ParamsSchema,
-            # then pass it along to get_many().
-            #
-            # Serialize and return whatever get_many() returns.
-            return serialize(await self.visit.get_many(**query))
+            # Transform and validate query params using
+            # ParamsSchema and pass along to get_many().
+            # Then..
+            # Return whatever get_many() returned.
+            return await self.visit.get_many(**query)
 
 
 
 Returns
 ~~~~~~~
 
-The `@returns` decorator takes care of serializing the data returned by the route handler.
+The `@returns` decorator takes care of serializing data returned by the route handler, into JSON.
 
 *API*
 
@@ -143,9 +145,9 @@ The `@returns` decorator takes care of serializing the data returned by the rout
         @takes(query=ParamsSchema)
         @returns(Visit, many=True)
         async def visits_get(self, query):
-            # Transform and validate query params against ParamsSchema,
-            # then pass it along to get_many().
-            #
-            # Transform and dump the object returned from get_many() -
-            # according to the Visit schema, as a JSON encoded response
+            # Transform and validate query params using
+            # ParamsSchema and pass along to VisitService.get_many()
+            # Then..
+            # Transform and dump the object returned by get_many()
+            # using the Visit schema, as a JSON encoded response.
             return await self.visit.get_many(**query)

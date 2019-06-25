@@ -57,6 +57,7 @@ class ComponentType(Enum):
 
 class ImportRegistry:
     imported = {}
+    log = logging.getLogger("aioli.pkg")
 
     def __init__(self, modules, conf_full):
         self._conf_full = conf_full
@@ -85,7 +86,7 @@ class ImportRegistry:
 
             package = module.export
 
-            app.log.info(f"Attaching {package.name}/{package.version}")
+            self.log.info(f"Attaching {package.name}/{package.version}")
 
             if not isinstance(package, Package):
                 raise Exception(f"Invalid package type {package}: must be of type {Package}")
@@ -112,7 +113,7 @@ class Application(Starlette):
     :var packages: Packages registered with the Application
     """
 
-    log = logging.getLogger("aioli")
+    log = logging.getLogger("aioli.core")
     packages = None
     __state = {}
 

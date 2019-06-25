@@ -25,12 +25,12 @@ package.
    api/service
 
 .. toctree::
-   :caption: Extend
+   :caption: Extensions
 
    extensions
 
 .. toctree::
-   :caption: Examples
+   :caption: Snippets
    :maxdepth: 1
 
    examples/about

@@ -1,31 +1,24 @@
 Info
 ====
 
-Extensions in Aioli are used for supporting Packages with extra functionality, typically for interacting with remote systems.
-
-To make use of an Extension, the Package itself and its dependencies needs to be registered with the Application.
-
-
-Create
-======
-
-An Extension usually provides an interface with one or more Services. These Services are created using the
-:class:`~aioli.service.BaseService` class and often implements the `Factory pattern <https://en.wikipedia.org/wiki/Factory_method_pattern>`_.
+An Extension is comprised of one or more Services deriving from :class:`~aioli.service.BaseService` and typically
+creates an abstraction layer for accessing a remote system. Extensions usually implements the
+`Factory pattern <https://en.wikipedia.org/wiki/Factory_method_pattern>`_.
 
 Check out the `aioli-rdbms extension <https://github.com/aioli-framework/aioli-rdbms>`_ for an example.
 
 
-Register
-========
+Import
+======
 
+To make use of an Extension, its Package along with dependencies needs to be registered with the Application.
 
-An Extension–just like a regular :class:`~aioli.Package`–is registered with the :class:`~aioli.Application`, and
-have its Service(s) incorporated into other *Packages* using :meth:`~aioli.service.BaseService.integrate`
-or :meth:`~aioli.service.BaseService.connect`.
+Once registered, the Extension's Service(s) can be incorporated into other *Packages* using
+:meth:`~aioli.service.BaseService.integrate` or :meth:`~aioli.service.BaseService.connect`.
 
 **Example**
 
-Register the local *users* Package and its dependency, *aioli_rdbms*.
+Register the local *users* Package and its dependency; *aioli_rdbms*.
 
 .. code-block:: python
 

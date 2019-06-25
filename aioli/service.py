@@ -4,6 +4,17 @@ from .component import Component, ComponentMeta
 
 
 class BaseService(Component, metaclass=ComponentMeta):
+    """Base Service class
+
+    :param pkg: Attach to this package
+
+    :var app: Application instance
+    :var registry: Application ImportRegistry
+    :var pkg: Parent Package
+    :var config: Package configuration
+    :var log: Package logger
+    """
+
     _instances = {}
 
     def _validate_import(self, svc):

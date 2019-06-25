@@ -37,7 +37,7 @@ p.logo > img {
     font-size: 18px;
 }
 
-.toctree-l1 {
+.sphinxsidebarwrapper .toctree-l1 {
     padding-left: 25px !important;
 }
 
@@ -55,6 +55,6 @@ p.logo > img {
 
 .note {
     background-color: #fffeeb !important;
-    padding: 0 30px 15px 30px !important;
+    padding: 0 30px 10px 30px !important;
 }
 
