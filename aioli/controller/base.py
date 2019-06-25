@@ -27,7 +27,7 @@ class HttpControllerMeta(ComponentMeta):
             handler_addr = hex(id(handler))
             handler_name = f"{ctrl.__class__.__name__}.{route.name}"
 
-            path_full = format_path(app.conf["api_base"], pkg.path, route.path)
+            path_full = format_path(app.config["api_base"], pkg.path, route.path)
 
             if not hasattr(ctrl, "pkg"):
                 raise Exception(f"Superclass of {ctrl} was never created")

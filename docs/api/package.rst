@@ -4,11 +4,10 @@ Package
 =======
 
 
-A *Package* is a namespaced and labelled group of components that can be imported into an :class:`~aioli.Application`.
+The *Package* class is used for grouping and labeling a set of :ref:`Controllers <controller-docs>` and :ref:`Services <service-docs>`.
+These components typically contain code that makes sense to modularize in the Application at hand.
 
-There are two main components for building Web API Packages: :ref:`controller-docs` & :ref:`service-docs`
-
-When developing an Aioli application, local *Packages* typically contain code that makes sense to modularize in the Application at hand.
+Check out the :ref:`Extensions docs <extensions-docs>` to learn how Packages can be connected.
 
 
 .. automodule:: aioli

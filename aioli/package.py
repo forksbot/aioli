@@ -54,7 +54,7 @@ class Package:
     __path = None
 
     app = None
-    conf = {}
+    config = {}
     log: logging.Logger
 
     services = []
@@ -109,7 +109,7 @@ class Package:
         self.path = config.get("path", f"/{self.name}")
 
         try:
-            self.conf = self.conf_schema(self.name).load(config)
+            self.config = self.conf_schema(self.name).load(config)
         except ValidationError as e:
             raise Exception(f"Package {self.name} failed configuration validation: {e.messages}")
 

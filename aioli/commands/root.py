@@ -18,7 +18,7 @@ def cli():
 @click.option("--debug", default=True)
 @click.argument("app_path")
 def dev_server(app_path, host, port, **kwargs):
-    config = importer.import_from_string(app_path).conf
+    config = importer.import_from_string(app_path).config
     run_server(
         app_path,
         host=host or config["dev_host"],

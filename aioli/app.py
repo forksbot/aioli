@@ -128,14 +128,14 @@ class Application(Starlette):
         self.registry = ImportRegistry(packages, config)
 
         try:
-            self.conf = ApplicationConfigSchema().load(config.get("aioli", {}))
+            self.config = ApplicationConfigSchema().load(config.get("aioli", {}))
         except ValueError:
             raise Exception("Application `config` must be a collection")
         except ValidationError as e:
             raise Exception(f"Configuration validation error: {e.messages}")
 
         for name, logger in LOGGING_CONFIG_DEFAULTS['loggers'].items():
-            self.log_level = logger['level'] = 'DEBUG' if self.conf.get('debug') else 'INFO'
+            self.log_level = logger['level'] = 'DEBUG' if self.config.get('debug') else 'INFO'
 
         logging.config.dictConfig(LOGGING_CONFIG_DEFAULTS)
 

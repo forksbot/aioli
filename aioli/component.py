@@ -12,7 +12,7 @@ class ComponentMeta(type):
 
 
 class Component:
-    conf = None
+    config = None
     pkg = None
     log = None
 
@@ -21,7 +21,7 @@ class Component:
         self.app = pkg.app
         self.registry = self.app.registry
         self.log = pkg.log
-        self.conf = pkg.conf
+        self.config = pkg.config
 
     async def on_startup(self):
         """Called after the Package has been successfully attached to the Application"""

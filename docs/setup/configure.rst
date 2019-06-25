@@ -51,7 +51,7 @@ Package
 ~~~~~~~
 
 A custom *Package* configuration schema can be defined using the :class:`~aioli.config.PackageConfigSchema` class,
-which comes with a set of common parameters, listed below.
+which comes with a set of common parameters listed below.
 
 *Locations*
 
@@ -105,12 +105,12 @@ Constructor
 
 The configuration can be provided as a dictionary to the *config* parameter when creating the :class:`~aioli.Application`.
 
-Check out the :ref:`package-config-schema-example` for an example.
+Check out an :ref:`Application configuration example <package-config-schema-example>`.
 
 Access
 ^^^^^^
 
-Both :class:`~aioli.Application` and :class:`~aioli.Package` configurations can be easily accessed from :ref:`service-docs` and :ref:`controller-docs` instances,
+Both :class:`~aioli.Application` and :class:`~aioli.Package` configurations can be easily accessed from both :ref:`service-docs` and :ref:`controller-docs` instances,
 using the `config` property.
 
 

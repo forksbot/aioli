@@ -1,8 +1,10 @@
+.. _extensions-docs:
+
 Info
 ====
 
 An Extension is comprised of one or more Services deriving from :class:`~aioli.service.BaseService` and typically
-creates an abstraction layer for accessing a remote system. Extensions usually implements the
+creates an abstraction layer for accessing a remote system. Furthermore, this type of *Package* usually implements the
 `Factory pattern <https://en.wikipedia.org/wiki/Factory_method_pattern>`_.
 
 Check out the `aioli-rdbms extension <https://github.com/aioli-framework/aioli-rdbms>`_ for an example.
