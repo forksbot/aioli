@@ -33,7 +33,7 @@ Register the local *users* Package and its dependency; *aioli_rdbms*.
    import .users
 
    app = Application(
-       config=toml.load("config.toml"),
+       config=toml.load("aioli.cfg"),
        packages=[users, aioli_rdbms]
    )
 

@@ -1,17 +1,12 @@
-# -*- coding: utf-8 -*-
-
 from enum import Enum
 
 import logging
 import logging.config
 import traceback
 
-import ujson
-
 from json.decoder import JSONDecodeError
 from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import Response
 from marshmallow.exceptions import ValidationError
 
 from aioli.exceptions import HTTPException, AioliException
@@ -19,14 +14,7 @@ from aioli.log import LOGGING_CONFIG_DEFAULTS
 from aioli.package import Package
 
 from .config import ApplicationConfigSchema
-
-
-def jsonify(content, status=200):
-    return Response(
-        content=ujson.dumps(content, ensure_ascii=False).encode("utf8"),
-        status_code=status,
-        headers={"content-type": "application/json"},
-    )
+from .utils import jsonify
 
 
 async def server_error(_, exc):

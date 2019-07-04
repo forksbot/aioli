@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from functools import wraps
 
 from starlette.requests import Request
@@ -50,8 +48,10 @@ def takes(props=None, **schemas):
     :return: Route handler
     """
 
-    props = props or []
-    schemas = {part: schema() for part, schema in schemas.items()}
+    header = schemas.get("header")
+    body = schemas.get("body")
+    path = schemas.get("path")
+    query = schemas.get("query")
 
     def wrapper(fn):
         @wraps(fn)
@@ -70,25 +70,25 @@ def takes(props=None, **schemas):
 
                 kwargs.update({RequestProp(prop).name: target})
 
-            if "headers" in schemas:
-                kwargs.update({"headers": schemas["headers"].load(request.headers)})
+            if header:
+                kwargs.update({"header": header().load(request.headers)})
 
-            if "path" in schemas:
-                kwargs.update(schemas["path"].load(request.path_params))
+            if path:
+                kwargs.update(path().load(request.path_params))
 
-            if "body" in schemas:
+            if body:
                 payload = await request.json()
-                kwargs.update({"body": schemas["body"].load(payload)})
+                kwargs.update({"body": body().load(payload)})
 
-            if "query" in schemas:
-                kwargs.update({"query": schemas["query"].load(request.query_params)})
+            if query:
+                kwargs.update({"query": query().load(request.query_params)})
 
             return await fn(*args_new, **kwargs)
 
         stack = RouteRegistry.get_stack(handler)
 
         # Add the provided schemas to the RouteStack
-        stack.schemas.update(schemas)
+        stack.schemas.from_dict(**schemas)
 
         return handler
 
@@ -104,7 +104,7 @@ def returns(schema_cls=None, status=200, many=False):
     :return: Response
     """
 
-    schema = schema_cls(many=many) if schema_cls else None
+    obj = schema_cls(many=many) if schema_cls else None
 
     def wrapper(fn):
         @wraps(fn)
@@ -117,8 +117,8 @@ def returns(schema_cls=None, status=200, many=False):
 
             rv = await fn(*args_new, **kwargs)
             data = (
-                schema.dumps(rv, indent=4, ensure_ascii=False).encode("utf8")
-                if schema
+                obj.dumps(rv, indent=4, ensure_ascii=False).encode("utf8")
+                if obj
                 else None
             )
 
@@ -132,7 +132,7 @@ def returns(schema_cls=None, status=200, many=False):
         stack = RouteRegistry.get_stack(handler)
 
         # Add the `response` schema to this route handler's stack
-        stack.schemas.update({"response": schema})
+        stack.schemas.response = schema_cls
 
         return handler
 

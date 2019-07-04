@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import ujson
 import marshmallow
 
@@ -19,6 +17,9 @@ class JsonSerializer:
 
 class SchemaOpts(marshmallow.schema.SchemaOpts):
     def __init__(self, meta, **kwargs):
+        self.load_only = []
+        self.dump_only = []
+
         super(SchemaOpts, self).__init__(meta, **kwargs)
         self.render_module = JsonSerializer
         self.unknown = "EXCLUDE"

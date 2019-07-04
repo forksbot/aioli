@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import click
 
 from uvicorn import run as run_server, importer

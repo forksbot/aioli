@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from os import environ as env
 
 from marshmallow import fields, post_load, schema, validate
@@ -49,7 +47,7 @@ class PackageConfigSchema(BaseConfigSchema):
         super(PackageConfigSchema, self).__init__(*args, **kwargs)
 
     debug = fields.Bool(missing=None)
-    path = fields.String(required=False)
+    path = fields.String(required=False, missing=None)
     should_import_controllers = fields.Bool(default=True)
     should_import_services = fields.Bool(default=True)
 

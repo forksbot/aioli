@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import sys
 
 LOGGING_CONFIG_DEFAULTS = dict(

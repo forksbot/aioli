@@ -1,4 +1,23 @@
-# -*- coding: utf-8 -*-
+class RequestSchema:
+    _parts = {}
+
+    @property
+    def parts(self):
+        return self._parts
+
+    def __iter__(self):
+        return self._parts
+
+    def __setattr__(self, key, value):
+        self._parts[key] = value
+
+    def __getattr__(self, key):
+        if key in self._parts:
+            return self._parts[key]
+
+    def from_dict(self, **schemas):
+        for key, schema in schemas.items():
+            self._parts[key] = schema
 
 
 class RouteStack:
@@ -11,7 +30,7 @@ class RouteStack:
     description = None
 
     def __init__(self):
-        self.schemas = {"response": None, "query": None, "body": None}
+        self.schemas = RequestSchema()
 
     def __dict__(self):
         return self.__class__.__dict__

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import re
 
 from starlette.endpoints import WebSocketEndpoint

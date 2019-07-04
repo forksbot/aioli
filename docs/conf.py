@@ -1,14 +1,17 @@
 import sys
 import os
 
+from datetime import datetime
+
 here = os.path.abspath(os.path.dirname(__file__))
 sys.path.insert(0, os.path.abspath(".."))
 
 import aioli
 
+now = datetime.now()
 
 project = "Aioli"
-copyright = "2019 Robert Wikman"
+copyright = f"{now.year} Robert Wikman"
 author = u"Robert Wikman <rbw@vault13.org>"
 
 version = aioli.__version__
@@ -35,6 +38,8 @@ pygments_style = "sphinx"
 
 html_static_path = ["_static"]
 
+html_favicon = "_static/favicon.png"
+
 html_context = {
     "maintainer": "Robert Wikman <rbw@vault13.org>",
     "project_pretty_name": "Aioli Framework",
@@ -47,11 +52,11 @@ html_sidebars = {
     ]
 }
 html_theme_options = {
-    "sidebar_width": "220px",
+    "sidebar_width": "150px",
     "sidebar_collapse": True,
     "fixed_sidebar": True,
     "logo_name": None,
-    "logo": "logo_title.png",
+    "logo": "logo_text.png",
     "font_family": "arial",
     "github_repo": "aioli-framework/aioli",
     "github_banner": True,

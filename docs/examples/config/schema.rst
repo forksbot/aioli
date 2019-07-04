@@ -61,7 +61,7 @@ Configure
 
 Create the configuration using the format of choice.
 
-*File: config.toml*
+*File: aioli.cfg*
 
 .. code-block:: toml
 
@@ -100,7 +100,7 @@ Parse the configuration file and pass it as a Dictionary to the :class:`~aioli.A
    from aioli import Application
 
    app = Application(
-       config=toml.load("config.toml"),
+       config=toml.load("aioli.cfg"),
        packages=[
            aioli_guestbook,
            aioli_rdbms,

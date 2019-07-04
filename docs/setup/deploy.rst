@@ -18,7 +18,7 @@ Given an Application like:
     from aioli import Application
 
     app = Application(
-        config=toml.load("config.toml"),
+        config=toml.load("aioli.cfg"),
         packages=[
             aioli_guestbook,
             aioli_rdbms,
