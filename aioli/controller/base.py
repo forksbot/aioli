@@ -4,7 +4,7 @@ from starlette.endpoints import WebSocketEndpoint
 
 from aioli.component import Component, ComponentMeta
 
-from .registry import RouteRegistry
+from .registry import handlers
 
 
 def format_path(*parts):
@@ -21,24 +21,24 @@ class HttpControllerMeta(ComponentMeta):
         ctrl = super(HttpControllerMeta, cls).__call__(pkg, *args, **kwargs)
         app = pkg.app
 
-        for handler, route in ctrl.stacks:
-            handler_addr = hex(id(handler))
-            handler_name = f"{ctrl.__class__.__name__}.{route.name}"
+        for func, handler in ctrl.handlers:
+            handler_addr = hex(id(func))
+            handler_name = f"{ctrl.__class__.__name__}.{handler.name}"
 
-            path_full = format_path(app.config["api_base"], pkg.path, route.path)
+            path_full = format_path(app.config["api_base"], pkg.path, handler.path)
 
             if not hasattr(ctrl, "pkg"):
                 raise Exception(f"Superclass of {ctrl} was never created")
 
             ctrl.log.info(
-                f"Registering Route: {path_full} [{route.method}] => "
-                f"{route.name} [{handler_addr}]"
+                f"Registering Route: {path_full} [{handler.method}] => "
+                f"{handler.name} [{handler_addr}]"
             )
 
-            methods = [route.method]
+            methods = [handler.method]
 
-            app.add_route(path_full, handler, methods, handler_name)
-            route.path_full = path_full
+            app.add_route(path_full, func, methods, handler_name)
+            handler.path_full = path_full
 
         return ctrl
 
@@ -57,11 +57,11 @@ class BaseHttpController(Component, metaclass=HttpControllerMeta):
         """Called on request arrival for this Controller"""
 
     @property
-    def stacks(self):
-        for stack in RouteRegistry.stacks.values():
+    def handlers(self):
+        for handler in handlers.values():
             # Yield only if the stack belongs to the Controller being iterated on
-            if stack.handler.__module__ == self.__module__:
-                yield getattr(self, stack.name), stack
+            if handler.func.__module__ == self.__module__:
+                yield getattr(self, handler.name), handler
 
 
 class BaseWebSocketController(WebSocketEndpoint, Component, metaclass=ComponentMeta):

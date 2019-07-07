@@ -44,7 +44,7 @@ class ComponentType(Enum):
 
 
 class ImportRegistry:
-    imported = {}
+    imported = []
     log = logging.getLogger("aioli.pkg")
 
     def __init__(self, modules, conf_full):
@@ -59,8 +59,8 @@ class ImportRegistry:
 
         comps = []
 
-        for pkg, _ in self.imported.values():
-            comps += getattr(pkg, comp_type)
+        for _, module in self.imported:
+            comps += getattr(module.export, comp_type)
 
         return comps
 
@@ -83,11 +83,11 @@ class ImportRegistry:
 
             await package.register(app, config)
 
-            self.imported.update({package.name: (package, module)})
+            self.imported.append(module)
 
-        for pkg, _ in self.imported.values():
-            await pkg.attach_controllers()
-            await pkg.attach_services()
+        for module in self.imported:
+            await module.export.attach_controllers()
+            await module.export.attach_services()
 
 
 class Application(Starlette):
@@ -116,7 +116,7 @@ class Application(Starlette):
         self.registry = ImportRegistry(packages, config)
 
         try:
-            self.config = ApplicationConfigSchema().load(config.get("aioli", {}))
+            self.config = ApplicationConfigSchema().load(config.get("aioli_core", {}))
         except ValueError:
             raise Exception("Application `config` must be a collection")
         except ValidationError as e:

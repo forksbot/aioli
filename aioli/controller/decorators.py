@@ -4,9 +4,10 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from aioli.exceptions import AioliException
+from aioli.utils import jsonify
 
 from .consts import Method, RequestProp
-from .registry import RouteRegistry
+from .registry import Handler
 
 
 def route(path, method, description=None):
@@ -20,21 +21,21 @@ def route(path, method, description=None):
 
     def wrapper(fn):
         @wraps(fn)
-        async def handler(*args, **kwargs):
+        async def handler_fn(*args, **kwargs):
             return await fn(*args, **kwargs)
 
         if not isinstance(method, Method):
             raise AioliException(
-                f"Invalid HTTP method supplied in @route for handler: {handler}. "
+                f"Invalid HTTP method supplied in @route for handler: {handler_fn}. "
                 f"Must be of type: {Method.__module__}.{Method.__name__}"
             )
 
-        stack = RouteRegistry.get_stack(handler)
+        handler = Handler(handler_fn)
 
         # Adds the handler for registration once the loop is ready.
-        stack.add_route(handler, path, method.value, description)
+        handler.register_route(path, method.value, description)
 
-        return handler
+        return handler_fn
 
     return wrapper
 
@@ -55,11 +56,11 @@ def takes(props=None, **schemas):
 
     def wrapper(fn):
         @wraps(fn)
-        async def handler(*args, **kwargs):
+        async def handler_fn(*args, **kwargs):
             args_new = list(args)
             request = kwargs["request"] if "request" in kwargs else args_new.pop(1)
 
-            for prop in props:
+            for prop in props or []:
                 value = RequestProp(prop).value
                 assert "." in value
 
@@ -85,12 +86,12 @@ def takes(props=None, **schemas):
 
             return await fn(*args_new, **kwargs)
 
-        stack = RouteRegistry.get_stack(handler)
+        handler = Handler(handler_fn)
 
         # Add the provided schemas to the RouteStack
-        stack.schemas.from_dict(**schemas)
+        handler.schemas.from_dict(**schemas)
 
-        return handler
+        return handler_fn
 
     return wrapper
 
@@ -104,22 +105,28 @@ def returns(schema_cls=None, status=200, many=False):
     :return: Response
     """
 
-    obj = schema_cls(many=many) if schema_cls else None
+    schema = schema_cls(many=many) if schema_cls else None
 
     def wrapper(fn):
         @wraps(fn)
-        async def handler(*args, **kwargs):
+        async def handler_fn(pkg, *args, **kwargs):
             args_new = list(args)
 
             # Remove `Request` object from args (in case it wasn't consumed by an `input_local`).
             if len(args) > 1 and isinstance(args[1], Request):
                 args_new.pop(1)
 
-            rv = await fn(*args_new, **kwargs)
+            rv = await fn(pkg, *args_new, **kwargs)
+
+            indent = 4 if pkg.app.config["pretty_json"] else 0
+
+            if not schema:
+                return jsonify(rv, status, indent=indent)
+
             data = (
-                obj.dumps(rv, indent=4, ensure_ascii=False).encode("utf8")
-                if obj
-                else None
+                schema.dumps(rv, indent=indent, ensure_ascii=False).encode("utf8")
+                if schema
+                else rv
             )
 
             # Return HTTP encoded JSON response
@@ -129,11 +136,12 @@ def returns(schema_cls=None, status=200, many=False):
                 headers={"content-type": "application/json"},
             )
 
-        stack = RouteRegistry.get_stack(handler)
+        handler = Handler(handler_fn)
 
-        # Add the `response` schema to this route handler's stack
-        stack.schemas.response = schema_cls
+        # Add the `response` schema to this handler
+        handler.schemas.response = schema_cls
+        handler.status = status
 
-        return handler
+        return handler_fn
 
     return wrapper

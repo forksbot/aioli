@@ -44,6 +44,7 @@ Mappings used for configuring core parts of an Aioli Application.
    dev_host              AIOLI_CORE_DEV_HOST      127.0.0.1
    dev_port              AIOLI_CORE_DEV_PORT      5000
    api_base              AIOLI_CORE_API_BASE      /api
+   pretty_json           AIOLI_CORE_PRETTY_JSON   False
    debug                 AIOLI_CORE_DEBUG         False
    ===================   =======================  ===========
 

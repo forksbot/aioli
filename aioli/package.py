@@ -98,7 +98,7 @@ class Package:
             await obj.on_startup()
 
     async def attach_controllers(self):
-        for obj in self.services:
+        for obj in self.controllers:
             await obj.on_startup()
 
     async def register(self, app, config):

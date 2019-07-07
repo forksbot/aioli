@@ -48,8 +48,8 @@ class PackageConfigSchema(BaseConfigSchema):
 
     debug = fields.Bool(missing=None)
     path = fields.String(required=False, missing=None)
-    should_import_controllers = fields.Bool(default=True)
-    should_import_services = fields.Bool(default=True)
+    should_import_controllers = fields.Bool(missing=True)
+    should_import_services = fields.Bool(missing=True)
 
 
 class ApplicationConfigSchema(BaseConfigSchema):
@@ -66,5 +66,6 @@ class ApplicationConfigSchema(BaseConfigSchema):
 
     dev_host = fields.String(missing="127.0.0.1")
     dev_port = fields.Integer(missing=5000)
+    pretty_json = fields.Bool(missing=False)
     debug = fields.Bool(missing=True)
     path = fields.String(missing="/api", attribute="api_base")

@@ -1,7 +1,7 @@
 HTTP
 ====
 
-Creating an HTTP Interface – be it RESTful or otherwise – is done using the
+Creating an HTTP Interface–be it RESTful or otherwise–is done using the
 :class:`~aioli.controller.BaseHttpController` class.
 
 
@@ -70,15 +70,13 @@ Transform
 
 Transformation is implemented on route handlers using `@takes` and `@returns`. These decorators offer
 a simple yet powerful way of shaping and validating request data, while also making sure API endpoints
-only returns expected data.
-
-This makes the API more secure and consistent.
+returns according to their schemas.
 
 Takes
 ~~~~~
 
 The `@takes` decorator is used to instruct Aioli how to deserialize and validate parts of a request,
-and injects the resulting dictionaries as arguments into the decorated function.
+and injects the validated data as arguments into the decorated function.
 
 *API*
 
@@ -116,7 +114,7 @@ and injects the resulting dictionaries as arguments into the decorated function.
 Returns
 ~~~~~~~
 
-The `@returns` decorator takes care of serializing data returned by the route handler, into JSON.
+The `@returns` decorator takes care of serializing data returned by its route handler, into JSON.
 
 *API*
 

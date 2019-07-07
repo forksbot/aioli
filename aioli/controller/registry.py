@@ -1,72 +1,66 @@
-class RequestSchema:
-    _parts = {}
+handlers = {}
 
-    @property
-    def parts(self):
-        return self._parts
+
+class HandlerMeta(type):
+    def __call__(cls, func):
+        fid = hash(func.__module__ + func.__name__)
+
+        if fid not in handlers:
+            handlers[fid] = super(HandlerMeta, cls).__call__(func)
+
+        return handlers[fid]
+
+
+class HandlerSchema:
+    def __init__(self):
+        self.body = None
+        self.path = None
+        self.header = None
+        self.query = None
+        self.response = None
 
     def __iter__(self):
-        return self._parts
-
-    def __setattr__(self, key, value):
-        self._parts[key] = value
-
-    def __getattr__(self, key):
-        if key in self._parts:
-            return self._parts[key]
+        for location, schema in self.__dict__.items():
+            yield location, schema
 
     def from_dict(self, **schemas):
         for key, schema in schemas.items():
-            self._parts[key] = schema
+            setattr(self, key, schema)
 
 
-class RouteStack:
+class Handler(metaclass=HandlerMeta):
     """Keeps track of decorators applied to a route handler"""
 
-    handler = None
     name = None
     path = None
+    path_full = None
+    status = None
     method = None
     description = None
+    _schemas = None
 
-    def __init__(self):
-        self.schemas = RequestSchema()
+    @property
+    def schemas(self):
+        if not self._schemas:
+            self._schemas = HandlerSchema()
+
+        return self._schemas
+
+    def __init__(self, func):
+        self.func = func
+        self.name = func.__name__
 
     def __dict__(self):
         return self.__class__.__dict__
 
-    def add_route(self, handler, path, method, description):
+    def register_route(self, path, method, description):
         """Adds new route to the stack
 
-        :param handler: Route handler function
         :param path: Route path
         :param method: Route method
         :param description: Endpoint description
         """
 
-        self.handler = handler
-        self.name = handler.__name__
         self.path = path
         self.method = method
         self.description = description
-
-
-class RouteRegistry:
-    """Keeps track of all RouteStacks in the application"""
-
-    stacks = {}
-
-    @classmethod
-    def get_stack(cls, handler):
-        """Get (or create) new RouteStack for a handler
-
-        :param handler: route handler
-        :return: RouteStack instance
-        """
-
-        hid = hash(handler.__module__ + handler.__name__)
-
-        if hid not in cls.stacks:
-            cls.stacks[hid] = RouteStack()
-
-        return cls.stacks[hid]
