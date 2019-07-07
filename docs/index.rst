@@ -6,7 +6,7 @@ Its easy-to-use component system, which was built with emphasis on portability a
 
 Furthermore, it makes use of asyncio, is lightweight, and provides high performance and concurrency–especially for IO-bound workloads.
 
-Note that Aioli only works only with modern versions of Python (3.6+) and is *Event loop driven*, i.e. code must be `asynchronous <https://docs.python.org/3/library/asyncio.html>`_.
+Note that Aioli only works with modern versions of Python (3.6+) and is *Event loop driven*, i.e. code must be `asynchronous <https://docs.python.org/3/library/asyncio.html>`_.
 
 Not in the mood for reading docs? Check out `The Guestbook Repository <https://github.com/aioli-framework/aioli-guestbook-example>`_ for a comprehensive RESTful HTTP example.
 
