@@ -1,9 +1,11 @@
 [tool.poetry]
 name = "aioli"
-version = "0.3.0"
+version = "0.3.1"
 description = "Non-blocking Web API Framework and Toolkit"
 authors = ["Robert Wikman <rbw@vault13.org>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/aioli-framework/aioli"
 
 [tool.poetry.dependencies]
 python = "^3.6"
