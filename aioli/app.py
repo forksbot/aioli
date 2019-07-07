@@ -142,7 +142,7 @@ class Application(Starlette):
         self.add_exception_handler(Exception, server_error)
 
         # Middleware
-        self.add_middleware(CORSMiddleware, allow_origins=["*"])
+        self.add_middleware(CORSMiddleware, allow_origins=self.config["allow_origins"])
 
     def add_exception_handler(self, exception, handler):
         """Add a new exception handler

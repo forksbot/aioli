@@ -67,5 +67,6 @@ class ApplicationConfigSchema(BaseConfigSchema):
     dev_host = fields.String(missing="127.0.0.1")
     dev_port = fields.Integer(missing=5000)
     pretty_json = fields.Bool(missing=False)
+    allow_origins = fields.List(fields.String(), missing=["*"])
     debug = fields.Bool(missing=True)
     path = fields.String(missing="/api", attribute="api_base")

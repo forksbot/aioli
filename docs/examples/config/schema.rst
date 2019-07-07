@@ -68,6 +68,8 @@ Create the configuration using the format of choice.
    [aioli_core]
    dev_port = 5555
    path = "/api"
+   pretty_json = false
+   allow_origins = ["*"]
    debug = true
 
    [aioli_guestbook]
