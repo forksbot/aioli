@@ -3,7 +3,7 @@
 Controller
 ==========
 
-The Controller layer takes care of stuff like routing, request and response handling, transformation, validation.
+The Controller component takes care of routing, request and response handling, transformation and validation.
 Multiple Controllers of different type may coexist in a Package's Controller layer.
 
 

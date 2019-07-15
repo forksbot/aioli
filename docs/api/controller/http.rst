@@ -38,7 +38,7 @@ Creating an HTTP Interface–be it RESTful or otherwise–is done using the
 Route
 -----
 
-Route handlers are standard Python methods decorated with the `@route`.
+Route handlers are standard Python methods decorated with `@route`.
 
 *API*
 
@@ -69,7 +69,7 @@ Transform
 ---------
 
 Transformation is implemented on route handlers using `@takes` and `@returns`. These decorators offer
-a simple yet powerful way of shaping and validating request data, while also making sure API endpoints
+a simple yet powerful way of shaping and validating request data, while also ensuring API endpoints
 returns according to their schemas.
 
 Takes
