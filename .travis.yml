@@ -7,6 +7,7 @@ script:
     - python -m pytest --cov=./
 install:
     - pip install pipenv codecov pytest-cov
+    - pipenv lock
     - pipenv sync
 after_success:
     - codecov
