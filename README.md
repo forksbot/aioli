@@ -38,4 +38,4 @@ Aioli is in development; expect some breakage, as well as lacking documentation 
 
 Author
 ---
-Robert Wikman \<aioli-framework@vault13.org\>
+Robert Wikman \<rbw@vault13.org\>
