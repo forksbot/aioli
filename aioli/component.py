@@ -21,7 +21,7 @@ class Component:
         self.config = pkg.config
 
     async def on_startup(self):
-        """Called after the Package has been successfully attached to the Application"""
+        """Called after the Package has been successfully attached to the Application and the Loop is available"""
 
     async def on_shutdown(self):
         """Called when the Application is shutting down gracefully"""
